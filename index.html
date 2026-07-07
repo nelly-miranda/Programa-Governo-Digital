@@ -1,1761 +1,1035 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traevo GovTech — Infraestrutura Institucional</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --white: #FFFFFF;
-      --black: #111111;
-      --gold: #D6A63C;
-      --gold-dark: #b8852c;
-      --gold-glow: rgba(214,166,60,0.10);
-      --gold-border: rgba(214,166,60,0.22);
-      --gray: #6B6B6B;
-      --gray-light: #F9F9F9;
-      --border: rgba(0,0,0,0.08);
-      --f: 'Inter', system-ui, -apple-system, sans-serif;
-      --ease: cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--f);
-      background: var(--white);
-      color: var(--black);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
-    }
-
-    /* ─── NAV ─────────────────────────────────────────── */
-    .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
-      height: 72px;
-      display: flex; align-items: center;
-      padding: 0 64px;
-      background: rgba(255,255,255,0.93);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      transition: background 0.3s, border-color 0.3s;
-    }
-    .nav-inner {
-      display: flex; align-items: center;
-      width: 100%; max-width: 1280px; margin: 0 auto;
-    }
-    .nav-brand {
-      display: flex; align-items: center; gap: 11px;
-      text-decoration: none; flex-shrink: 0;
-    }
-    .nav-mark {
-      width: 30px; height: 30px;
-      background: var(--gold); border-radius: 6px;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: flex-start;
-      padding: 7px 6px; gap: 3px;
-    }
-    .nav-mark span {
-      display: block; height: 2px; border-radius: 2px;
-      background: rgba(255,255,255,0.92);
-    }
-    .nav-mark span:nth-child(1) { width: 13px; }
-    .nav-mark span:nth-child(2) { width: 9px; opacity: 0.7; }
-    .nav-mark span:nth-child(3) { width: 6px; opacity: 0.45; }
-    .nav-wordmark {
-      font-size: 14.5px; font-weight: 600; letter-spacing: -0.2px;
-      color: var(--black);
-    }
-    .nav-wordmark b { font-weight: 600; color: var(--gold); }
-    .nav-links {
-      display: flex; align-items: center; gap: 2px;
-      margin-left: auto; list-style: none;
-    }
-    .nav-links a {
-      font-size: 13px; font-weight: 450; color: #555;
-      text-decoration: none; padding: 6px 13px; border-radius: 6px;
-      transition: background 0.15s, color 0.15s;
-      letter-spacing: -0.1px;
-    }
-    .nav-links a:hover { background: rgba(0,0,0,0.04); color: var(--black); }
-    .nav-links .nav-cta a {
-      background: var(--black); color: var(--white) !important;
-      margin-left: 10px; padding: 7px 18px; font-weight: 500;
-      border-radius: 7px; transition: background 0.2s, transform 0.2s;
-    }
-    .nav-links .nav-cta a:hover { background: #222; transform: translateY(-1px); }
-
-    /* Mobile hamburger button */
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 20px;
-      height: 16px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      z-index: 1001;
-    }
-    .menu-toggle span {
-      display: block;
-      width: 100%;
-      height: 2px;
-      background-color: var(--black);
-      border-radius: 2px;
-      transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
-    }
-    .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .menu-toggle.active span:nth-child(2) { opacity: 0; }
-    .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-    /* Mobile overlay menu */
-    .nav-mobile-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100vh;
-      background: rgba(255,255,255,0.98);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 24px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s var(--ease);
-    }
-    .nav-mobile-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .nav-mobile-overlay a {
-      font-size: 20px;
-      font-weight: 500;
-      color: var(--black);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .nav-mobile-overlay a:hover {
-      color: var(--gold);
-    }
-
-    /* ─── BUTTONS ─────────────────────────────────────── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--f); font-size: 14px; font-weight: 500;
-      text-decoration: none; cursor: pointer; border: none;
-      transition: all 0.2s var(--ease);
-    }
-    .btn-dark {
-      background: var(--black); color: var(--white);
-      padding: 13px 26px; border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .btn-dark:hover { background: #242424; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-    .btn-dark svg { transition: transform 0.2s var(--ease); }
-    .btn-dark:hover svg { transform: translateX(4px); }
-    .btn-ghost {
-      background: transparent; color: var(--gray); padding: 0;
-      font-size: 13.5px;
-    }
-    .btn-ghost:hover { color: var(--black); }
-
-    /* ─── SECTION SHARED ──────────────────────────────── */
-    .s-wrap {
-      max-width: 1280px; margin: 0 auto; padding: 0 64px;
-    }
-    .s-label {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 10.5px; font-weight: 600;
-      letter-spacing: 0.13em; text-transform: uppercase; color: var(--gold);
-      margin-bottom: 24px;
-    }
-    .s-label::before {
-      content: ''; width: 18px; height: 1.5px;
-      background: var(--gold); border-radius: 2px; flex-shrink: 0;
-    }
-
-    /* ─── HERO ────────────────────────────────────────── */
-    #hero {
-      min-height: 100vh; padding-top: 72px;
-      display: grid; grid-template-columns: 1fr 1fr;
-      align-items: center;
-      max-width: 1280px; margin: 0 auto;
-      padding-left: 64px; padding-right: 0;
-      overflow: hidden;
-    }
-    .hero-left {
-      padding: 80px 60px 80px 0;
-      display: flex; flex-direction: column; gap: 28px;
-    }
-    .hero-label {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 10.5px; font-weight: 600; letter-spacing: 0.13em;
-      text-transform: uppercase; color: var(--gray);
-    }
-    .hero-label::before {
-      content: ''; display: block; width: 22px; height: 2px;
-      background: var(--gold); border-radius: 2px;
-    }
-    .hero-h1 {
-      font-size: clamp(34px, 3.8vw, 50px); font-weight: 700;
-      line-height: 1.12; letter-spacing: -0.032em; color: var(--black);
-    }
-    .hero-sub {
-      font-size: 17px; font-weight: 400; line-height: 1.68;
-      color: #555; max-width: 430px;
-    }
-    .hero-actions {
-      display: flex; align-items: center; gap: 20px; margin-top: 4px;
-    }
-    .hero-stats {
-      display: flex; gap: 36px;
-      padding-top: 28px; border-top: 1px solid var(--border);
-      margin-top: 4px;
-    }
-    .hero-stat .val {
-      font-size: 28px; font-weight: 700;
-      letter-spacing: -0.04em; line-height: 1; color: var(--black);
-    }
-    .hero-stat .val em { font-style: normal; color: var(--gold); }
-    .hero-stat .lbl {
-      font-size: 11px; font-weight: 500; color: var(--gray);
-      margin-top: 5px; letter-spacing: 0.02em;
-    }
-    .hero-right {
-      position: relative; height: 100vh; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-    }
-    #hero-svg {
-      width: 100%; height: 100%;
-      max-height: 580px;
-      transition: transform 0.1s ease-out; /* For parallax mouse move */
-    }
-
-    /* ─── FILOSOFIA ───────────────────────────────────── */
-    #filosofia {
-      background: var(--black); color: var(--white);
-      padding: 140px 64px; text-align: center;
-      position: relative;
-    }
-    #filosofia .inner { max-width: 820px; margin: 0 auto; }
-    #filosofia .tag {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 10.5px; font-weight: 600; letter-spacing: 0.13em;
-      text-transform: uppercase; color: rgba(255,255,255,0.38);
-      margin-bottom: 36px; justify-content: center;
-    }
-    #filosofia .tag::before {
-      content: ''; width: 18px; height: 1.5px;
-      background: rgba(214,166,60,0.5); border-radius: 2px;
-    }
-    #filosofia .manifesto {
-      font-size: clamp(24px, 3.2vw, 42px); font-weight: 600;
-      line-height: 1.22; letter-spacing: -0.025em; color: var(--white);
-    }
-    #filosofia .manifesto em { font-style: normal; color: var(--gold); }
-    #filosofia .divider {
-      width: 52px; height: 1.5px; background: rgba(214,166,60,0.45);
-      margin: 40px auto; border-radius: 2px;
-    }
-    #filosofia .sub {
-      font-size: 16.5px; font-weight: 400; line-height: 1.7;
-      color: rgba(255,255,255,0.48); max-width: 540px;
-      margin: 0 auto;
-    }
-
-    /* ─── PLATAFORMA ──────────────────────────────────── */
-    #plataforma {
-      padding: 140px 0;
-    }
-    .plat-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 80px; align-items: start; margin-top: 56px;
-    }
-    .plat-left h2 {
-      font-size: clamp(26px, 2.8vw, 40px); font-weight: 700;
-      line-height: 1.18; letter-spacing: -0.028em;
-    }
-    .plat-left p {
-      margin-top: 20px; font-size: 15.5px; line-height: 1.72; color: #555;
-    }
-    .plat-features { margin-top: 36px; display: flex; flex-direction: column; gap: 14px; }
-    .plat-feature {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 18px 20px; border: 1px solid var(--border);
-      border-radius: 10px; transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .plat-feature:hover { border-color: var(--gold-border); box-shadow: 0 4px 15px rgba(214,166,60,0.04); }
-    .plat-icon {
-      width: 34px; height: 34px; flex-shrink: 0;
-      background: var(--gold-glow); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .plat-icon svg { color: var(--gold); }
-    .plat-feature h4 { font-size: 13.5px; font-weight: 600; }
-    .plat-feature p {
-      font-size: 12.5px; line-height: 1.65; color: var(--gray); margin-top: 3px;
-    }
-    .plat-cards { display: flex; flex-direction: column; gap: 14px; }
-    .plat-card {
-      padding: 26px 28px;
-      border: 1px solid var(--border); border-radius: 12px;
-      transition: all 0.22s var(--ease); position: relative; overflow: hidden;
-    }
-    .plat-card::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 3px; height: 0; background: var(--gold);
-      transition: height 0.3s var(--ease);
-    }
-    .plat-card:hover::before { height: 100%; }
-    .plat-card:hover {
-      border-color: var(--gold-border);
-      box-shadow: 0 6px 32px rgba(0,0,0,0.04);
-    }
-    .plat-card .num {
-      font-size: 10.5px; font-weight: 600;
-      letter-spacing: 0.1em; color: var(--gold); margin-bottom: 10px;
-    }
-    .plat-card h3 { font-size: 14.5px; font-weight: 600; }
-    .plat-card p {
-      margin-top: 7px; font-size: 13px; line-height: 1.68; color: var(--gray);
-    }
-
-    /* ─── WORKFLOW SIMULATOR (NEW FEATURE) ────────────── */
-    .sandbox-container {
-      margin-top: 60px;
-      background: var(--gray-light);
-      border-radius: 16px;
-      padding: 40px;
-      border: 1px solid var(--border);
-    }
-    .sandbox-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .sandbox-header h3 {
-      font-size: 20px;
-      margin-bottom: 8px;
-    }
-    .sandbox-header p {
-      font-size: 14px;
-      color: var(--gray);
-    }
-    .sandbox-flow {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin: 40px 0;
-      position: relative;
-    }
-    .sandbox-node {
-      background: var(--white);
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      flex: 1;
-      text-align: center;
-      transition: all 0.3s var(--ease);
-      position: relative;
-      z-index: 2;
-    }
-    .sandbox-node.active {
-      border-color: var(--gold);
-      box-shadow: 0 0 20px rgba(214,166,60,0.2);
-      transform: translateY(-4px);
-    }
-    .sandbox-node.completed {
-      background-color: var(--gold-glow);
-      border-color: var(--gold);
-    }
-    .sandbox-node h4 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .sandbox-node p {
-      font-size: 11px;
-      color: var(--gray);
-    }
-    .sandbox-connector {
-      flex-grow: 1;
-      height: 2px;
-      background: var(--border);
-      position: relative;
-      z-index: 1;
-    }
-    .sandbox-connector-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--gold);
-      transition: width 0.5s ease-out;
-    }
-    .sandbox-controls {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-    }
-    .sandbox-terminal {
-      background: #1e1e1e;
-      color: #a6accd;
-      font-family: monospace;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-      font-size: 12px;
-      min-height: 60px;
-      display: flex;
-      align-items: center;
-    }
-
-    /* ─── METODOLOGIAS ────────────────────────────────── */
-    #metodologias {
-      background: var(--gray-light); padding: 140px 0;
-    }
-    #metodologias h2 {
-      font-size: clamp(26px, 2.8vw, 40px); font-weight: 700;
-      letter-spacing: -0.028em; line-height: 1.18; max-width: 520px;
-      margin-bottom: 52px;
-    }
-    .met-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    }
-    .met-card {
-      padding: 36px 30px; background: var(--white);
-      border: 1px solid var(--border); border-radius: 14px;
-      transition: all 0.25s var(--ease);
-    }
-    .met-card:hover {
-      border-color: var(--gold-border);
-      box-shadow: 0 16px 56px rgba(0,0,0,0.06);
-      transform: translateY(-4px);
-    }
-    .met-tag {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
-    }
-    .met-card h3 {
-      font-size: 20px; font-weight: 700;
-      letter-spacing: -0.024em; line-height: 1.2; margin-bottom: 12px;
-    }
-    .met-card > p {
-      font-size: 13.5px; line-height: 1.72; color: var(--gray);
-    }
-    .met-items {
-      margin-top: 22px; padding-top: 20px;
-      border-top: 1px solid var(--border);
-      display: flex; flex-direction: column; gap: 8px; list-style: none;
-    }
-    .met-items li {
-      font-size: 12.5px; font-weight: 500; color: #444;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .met-items li::before {
-      content: ''; width: 4px; height: 4px;
-      background: var(--gold); border-radius: 50%; flex-shrink: 0;
-    }
-
-    /* ─── ECOSSISTEMA ─────────────────────────────────── */
-    #ecossistema { padding: 140px 0; }
-    .eco-header {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 60px; align-items: end; margin-bottom: 64px;
-    }
-    .eco-header h2 {
-      font-size: clamp(26px, 2.8vw, 40px); font-weight: 700;
-      letter-spacing: -0.028em; line-height: 1.18;
-    }
-    .eco-header p { font-size: 15.5px; line-height: 1.72; color: #555; }
-    .eco-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-    .eco-item {
-      padding: 28px 28px; border: 1px solid var(--border);
-      border-radius: 12px; transition: all 0.2s;
-    }
-    .eco-item.span2 { grid-column: span 2; background: var(--black); border-color: transparent; }
-    .eco-item:not(.span2):hover {
-      border-color: var(--gold-border);
-      box-shadow: 0 6px 32px rgba(0,0,0,0.04);
-    }
-    .eco-item.span2:hover { box-shadow: 0 16px 56px rgba(0,0,0,0.18); }
-    .eco-badge {
-      display: inline-block; font-size: 10px; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 4px 10px; border-radius: 100px; margin-bottom: 14px;
-    }
-    .badge-ia   { background: rgba(214,166,60,0.14); color: var(--gold); }
-    .badge-int  { background: rgba(0,0,0,0.05); color: #444; }
-    .badge-core { background: rgba(214,166,60,0.2); color: var(--gold); }
-    .eco-item h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
-    .eco-item p  { font-size: 13px; line-height: 1.68; color: var(--gray); }
-    .eco-item.span2 h3 { color: var(--white); font-size: 19px; }
-    .eco-item.span2 p  { color: rgba(255,255,255,0.5); font-size: 14px; }
-
-    /* ─── SEGMENTOS ───────────────────────────────────── */
-    #segmentos { background: var(--gray-light); padding: 140px 0; }
-    #segmentos h2 {
-      font-size: clamp(26px, 2.8vw, 40px); font-weight: 700;
-      letter-spacing: -0.028em; line-height: 1.18;
-      max-width: 500px; margin-bottom: 52px;
-    }
-    .seg-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-    }
-    .seg-card {
-      padding: 30px; background: var(--white);
-      border: 1px solid var(--border); border-radius: 12px;
-      transition: all 0.25s var(--ease);
-      position: relative; overflow: hidden;
-    }
-    .seg-card::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-      height: 2.5px; background: var(--gold);
-      transform: scaleX(0); transform-origin: left;
-      transition: transform 0.35s var(--ease);
-    }
-    .seg-card:hover::after { transform: scaleX(1); }
-    .seg-card:hover {
-      box-shadow: 0 12px 44px rgba(0,0,0,0.06);
-      transform: translateY(-3px); border-color: rgba(0,0,0,0.1);
-    }
-    .seg-num {
-      font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em;
-      color: rgba(0,0,0,0.2); margin-bottom: 14px;
-    }
-    .seg-card h3 {
-      font-size: 17px; font-weight: 700;
-      letter-spacing: -0.02em; margin-bottom: 9px;
-    }
-    .seg-card p { font-size: 12.5px; line-height: 1.7; color: var(--gray); }
-
-    /* ─── MODERNIZAÇÃO ────────────────────────────────── */
-    #modernizacao {
-      background: var(--black); color: var(--white); padding: 160px 64px;
-    }
-    #modernizacao .inner { max-width: 900px; margin: 0 auto; text-align: center; }
-    #modernizacao .tag {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 10.5px; font-weight: 600; letter-spacing: 0.13em;
-      text-transform: uppercase; color: rgba(255,255,255,0.35);
-      margin-bottom: 36px; justify-content: center;
-    }
-    #modernizacao .tag::before {
-      content: ''; width: 18px; height: 1.5px;
-      background: rgba(214,166,60,0.45); border-radius: 2px;
-    }
-    #modernizacao .big {
-      font-size: clamp(30px, 4.2vw, 58px); font-weight: 700;
-      line-height: 1.1; letter-spacing: -0.035em;
-    }
-    #modernizacao .big em { font-style: normal; color: var(--gold); }
-    #modernizacao .sub {
-      font-size: 16.5px; line-height: 1.7;
-      color: rgba(255,255,255,0.45);
-      margin: 28px auto; max-width: 560px;
-    }
-    .principles {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px; overflow: hidden;
-      margin: 56px 0; gap: 0;
-    }
-    .principle {
-      padding: 36px 30px; text-align: left;
-      border-right: 1px solid rgba(255,255,255,0.08);
-    }
-    .principle:last-child { border-right: none; }
-    .principle-num {
-      font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em;
-      color: var(--gold); margin-bottom: 16px;
-    }
-    .principle h4 {
-      font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 8px;
-    }
-    .principle p {
-      font-size: 13px; line-height: 1.68; color: rgba(255,255,255,0.42);
-    }
-
-    /* ─── FAQ SECTION (NEW FEATURE) ──────────────────── */
-    #faq {
-      padding: 100px 0;
-      background: var(--white);
-    }
-    .faq-container {
-      max-width: 800px;
-      margin: 40px auto 0;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .faq-item {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--white);
-      transition: border-color 0.3s var(--ease);
-    }
-    .faq-item:hover {
-      border-color: var(--gold-border);
-    }
-    .faq-trigger {
-      width: 100%;
-      padding: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-family: var(--f);
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--black);
-      text-align: left;
-    }
-    .faq-icon {
-      transition: transform 0.3s var(--ease);
-      color: var(--gold);
-    }
-    .faq-item.active .faq-icon {
-      transform: rotate(180deg);
-    }
-    .faq-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s var(--ease);
-    }
-    .faq-content-inner {
-      padding: 0 24px 24px;
-      font-size: 14.5px;
-      line-height: 1.6;
-      color: var(--gray);
-    }
-
-    /* ─── CONTATO ─────────────────────────────────────── */
-    #contato { padding: 140px 0; }
-    .contato-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 90px; align-items: start;
-    }
-    .contato-left h2 {
-      font-size: clamp(26px, 2.8vw, 40px); font-weight: 700;
-      letter-spacing: -0.028em; line-height: 1.18; margin-bottom: 18px;
-    }
-    .contato-left > p {
-      font-size: 15.5px; line-height: 1.72; color: #555; margin-bottom: 40px;
-    }
-    .contato-infos { display: flex; flex-direction: column; gap: 14px; }
-    .cinfo {
-      display: flex; align-items: center; gap: 13px;
-      font-size: 13.5px; color: #444;
-    }
-    .cinfo-icon {
-      width: 34px; height: 34px; flex-shrink: 0;
-      background: var(--gold-glow); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .contato-form { display: flex; flex-direction: column; gap: 14px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label {
-      font-size: 11.5px; font-weight: 600; color: #444; letter-spacing: 0.04em;
-    }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      font-family: var(--f); font-size: 13.5px; color: var(--black);
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 8px; padding: 11px 13px; outline: none;
-      transition: border-color 0.2s; -webkit-appearance: none;
-    }
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus { border-color: var(--gold); }
-    .form-group input::placeholder,
-    .form-group textarea::placeholder { color: #BBB; }
-    .form-group textarea { resize: vertical; min-height: 110px; }
-    .form-submit { margin-top: 4px; }
-    .btn-full { width: 100%; justify-content: center; }
-
-    /* ─── NOTIFICATION MODAL (SUCCESS) ────────────────── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(8px);
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s var(--ease);
-    }
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .modal-card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 40px;
-      max-width: 480px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-      transform: translateY(20px);
-      transition: transform 0.3s var(--ease);
-    }
-    .modal-overlay.active .modal-card {
-      transform: translateY(0);
-    }
-    .modal-icon {
-      width: 60px;
-      height: 60px;
-      background: var(--gold-glow);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      color: var(--gold);
-    }
-    .modal-card h3 {
-      font-size: 20px;
-      margin-bottom: 12px;
-    }
-    .modal-card p {
-      color: var(--gray);
-      font-size: 14.5px;
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-
-    /* ─── FOOTER ──────────────────────────────────────── */
-    footer {
-      background: var(--black); padding: 52px 64px;
-    }
-    .footer-inner {
-      max-width: 1280px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 32px;
-    }
-    .footer-brand {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.75);
-    }
-    .footer-mark {
-      width: 26px; height: 26px; background: var(--gold);
-      border-radius: 5px; display: flex; flex-direction: column;
-      justify-content: center; align-items: flex-start;
-      padding: 6px 5px; gap: 2.5px;
-    }
-    .footer-mark span {
-      display: block; height: 1.8px; border-radius: 2px;
-      background: rgba(255,255,255,0.9);
-    }
-    .footer-mark span:nth-child(1) { width: 12px; }
-    .footer-mark span:nth-child(2) { width: 8px; opacity: 0.7; }
-    .footer-mark span:nth-child(3) { width: 5px; opacity: 0.45; }
-    .footer-links {
-      display: flex; gap: 22px; list-style: none;
-    }
-    .footer-links a {
-      font-size: 12.5px; color: rgba(255,255,255,0.38);
-      text-decoration: none; transition: color 0.15s;
-    }
-    .footer-links a:hover { color: rgba(255,255,255,0.65); }
-    .footer-copy { font-size: 11.5px; color: rgba(255,255,255,0.25); }
-
-    /* ─── SCROLL REVEAL ───────────────────────────────── */
-    .reveal {
-      opacity: 0; transform: translateY(22px);
-      transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
-    }
-    .reveal.visible { opacity: 1; transform: none; }
-
-    /* ─── RESPONSIVE ──────────────────────────────────── */
-    @media (max-width: 960px) {
-      .nav { padding: 0 32px; }
-      .nav-links { display: none; }
-      .menu-toggle { display: flex; }
-      #hero { grid-template-columns: 1fr; padding: 120px 32px 64px; text-align: center; }
-      .hero-left { padding-right: 0; align-items: center; }
-      .hero-actions { justify-content: center; }
-      .hero-stats { justify-content: center; width: 100%; }
-      .hero-right { display: none; }
-      .plat-grid, .met-grid, .eco-grid, .seg-grid,
-      .contato-grid, .eco-header, .principles { grid-template-columns: 1fr; }
-      .eco-item.span2 { grid-column: span 1; }
-      .s-wrap { padding: 0 32px; }
-      #plataforma, #ecossistema, #contato, #faq { padding: 80px 0; }
-      #metodologias, #segmentos { padding: 80px 0; }
-      #filosofia, #modernizacao { padding: 80px 32px; }
-      footer { padding: 40px 32px; }
-      .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
-      .sandbox-flow { flex-direction: column; gap: 30px; }
-      .sandbox-connector { width: 2px; height: 30px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traevo GovTech — GRI · Gestão de Relacionamento Institucional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#FFFFFF; --black:#111111;
+  --gold:#D6A63C; --gold-dark:#b8852c;
+  --gold-glow:rgba(214,166,60,0.10); --gold-border:rgba(214,166,60,0.30);
+  --gray:#6B6B6B; --gray-light:#F9F9F9;
+  --border:rgba(0,0,0,0.08);
+  --green:#1E9E6A; --blue:#3B82F6; --red:#D9534F; --purple:#8B5CF6;
+  --f:'Inter',system-ui,-apple-system,sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+body{font-family:var(--f);font-size:14px;line-height:1.5;color:var(--black);background:var(--white);-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+/* ─── SIDEBAR ─── */
+.sidebar{width:272px;background:var(--white);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;padding:26px 16px 18px;overflow-y:auto}
+.sb-brand{display:flex;align-items:center;gap:11px;padding:0 8px 20px;border-bottom:1px solid var(--border);margin-bottom:18px}
+.sb-mark{width:32px;height:32px;background:var(--gold);border-radius:7px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:8px 7px;gap:3px;flex-shrink:0}
+.sb-mark span{display:block;height:2px;border-radius:2px;background:rgba(255,255,255,0.92)}
+.sb-mark span:nth-child(1){width:14px}.sb-mark span:nth-child(2){width:10px;opacity:.7}.sb-mark span:nth-child(3){width:6px;opacity:.45}
+.sb-brand .bx .name{font-size:15px;font-weight:700;letter-spacing:-0.3px}
+.sb-brand .bx .name b{color:var(--gold);font-weight:700}
+.sb-brand .bx .org{font-size:10.5px;font-weight:500;color:var(--gray);margin-top:2px}
+.sb-label{font-size:10px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:var(--gold);margin:16px 8px 8px;display:flex;align-items:center;gap:8px}
+.sb-label::before{content:'';width:14px;height:1.5px;background:var(--gold);border-radius:2px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:13px;font-weight:600;color:#444;cursor:pointer;border-radius:8px;transition:all .13s;margin-bottom:2px}
+.sb-item:hover{background:rgba(0,0,0,0.04);color:var(--black)}
+.sb-item.active{background:var(--black);color:var(--white)}
+.sb-item.active .sb-dot{background:var(--gold)}
+.sb-dot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,0.18);flex-shrink:0;transition:background .13s}
+.sb-item.soon{opacity:.45;cursor:default}
+.sb-item.soon:hover{background:transparent;color:#444}
+.soon-chip{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:var(--gold-glow);border:1px solid var(--gold-border);padding:2px 7px;border-radius:20px}
+.sb-footer{margin-top:auto;padding:14px 8px 0;border-top:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.sb-avatar{width:38px;height:38px;border-radius:50%;background:var(--black);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gold);flex-shrink:0}
+.sb-finfo .name{font-size:12.5px;font-weight:700}
+.sb-finfo .email{font-size:10.5px;color:var(--gray)}
+/* ─── MOBILE HEADER ─── */
+.mobile-header{display:none;background:rgba(255,255,255,0.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:14px 18px;position:sticky;top:0;z-index:200;justify-content:space-between;align-items:center}
+.mh-brand{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700}
+.mh-brand b{color:var(--gold)}
+.menu-toggle{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-weight:700;font-size:12px;cursor:pointer;font-family:var(--f)}
+/* ─── MAIN ─── */
+.main{margin-left:272px;flex:1;min-height:100vh;display:flex;flex-direction:column;padding-bottom:60px}
+.proj-header{padding:34px 44px 0;background:var(--white);border-bottom:1px solid var(--border)}
+.proj-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px}
+.proj-title{font-size:26px;font-weight:700;letter-spacing:-0.8px;line-height:1.15}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 13px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--border);background:var(--white)}
+.chip-nucleo{background:var(--black);color:var(--white);border-color:var(--black)}
+.chip-nucleo b{color:var(--gold);font-weight:700}
+.chip-gold{background:var(--gold-glow);border-color:var(--gold-border);color:var(--gold-dark)}
+.chip-proto{color:var(--gray)}
+.proj-desc{font-size:13.5px;font-weight:400;color:var(--gray);margin-bottom:26px;max-width:840px;line-height:1.65}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:16px}
+.tab{padding:9px 18px;font-size:12.5px;font-weight:600;color:#444;background:var(--white);cursor:pointer;border:1px solid var(--border);border-radius:9px;transition:all .14s var(--ease);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.tab:hover{border-color:var(--gold-border);background:var(--gold-glow);color:var(--black)}
+.tab.active{background:var(--black);color:var(--white);border-color:var(--black)}
+.tab.active .tab-ico{color:var(--gold)}
+.tab-ico{font-size:12px;color:var(--gold);font-weight:700}
+/* ─── CONTENT ─── */
+.content{padding:32px 44px;flex:1;background:var(--gray-light);min-height:60vh}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:fadeIn .22s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* ─── KPI ─── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi{border:1px solid var(--border);background:var(--white);border-radius:12px;padding:20px;transition:all .18s var(--ease)}
+.kpi:hover{border-color:var(--gold-border);box-shadow:0 8px 28px rgba(0,0,0,0.05);transform:translateY(-2px)}
+.kpi label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
+.kpi .val{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1}
+.kpi .val em{font-style:normal;color:var(--gold)}
+.kpi .sub{font-size:11px;font-weight:500;color:var(--gray);margin-top:8px;line-height:1.45}
+/* ─── SECTION HEADERS ─── */
+.sec-hd{margin-bottom:20px}
+.sec-hd .s-label{display:inline-flex;align-items:center;gap:9px;font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.sec-hd .s-label::before{content:'';width:16px;height:1.5px;background:var(--gold);border-radius:2px}
+.sec-hd h2{font-size:20px;font-weight:700;letter-spacing:-0.5px}
+.sec-hd p{font-size:13px;color:var(--gray);margin-top:5px;max-width:760px;line-height:1.6}
+/* ─── FEATURE GRID (visão geral) ─── */
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:22px}
+.feat-card{border:1px solid var(--border);border-radius:13px;background:var(--white);padding:22px 24px;position:relative;overflow:hidden;transition:all .2s var(--ease)}
+.feat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--gold);transition:height .3s var(--ease)}
+.feat-card:hover::before{height:100%}
+.feat-card:hover{border-color:var(--gold-border);box-shadow:0 8px 32px rgba(0,0,0,0.05)}
+.feat-num{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--gold);margin-bottom:9px}
+.feat-card h3{font-size:14.5px;font-weight:700;margin-bottom:7px}
+.feat-card p{font-size:12.5px;line-height:1.65;color:var(--gray)}
+.feat-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.f-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;border:1px solid var(--border);background:var(--gray-light);color:#555}
+/* ─── FLOW ─── */
+.flow-wrap{overflow-x:auto;padding-bottom:6px;margin:14px 0 6px}
+.flow-container{display:flex;align-items:center;min-width:max-content}
+.flow-step{background:var(--black);color:var(--white);border-radius:10px;padding:13px 20px;font-size:12px;font-weight:700;text-align:center;flex-shrink:0;line-height:1.3}
+.flow-step small{display:block;font-size:10px;font-weight:400;color:rgba(255,255,255,0.55);margin-top:3px}
+.flow-step.gold{background:var(--gold);color:var(--black)}
+.flow-step.gold small{color:rgba(0,0,0,0.55)}
+.flow-arrow{font-size:17px;font-weight:700;color:var(--gold);padding:0 11px;flex-shrink:0}
+/* ─── INFO BOXES ─── */
+.info-box{border:1px solid var(--gold-border);border-radius:12px;padding:16px 20px;font-size:13px;background:var(--gold-glow);margin-bottom:22px;line-height:1.65}
+.alert-box{border:1px solid rgba(217,83,79,0.3);border-radius:12px;padding:16px 20px;font-size:13px;background:rgba(217,83,79,0.06);margin-bottom:22px;line-height:1.65}
+.success-box{border:1px solid rgba(30,158,106,0.3);border-radius:12px;padding:16px 20px;font-size:13px;background:rgba(30,158,106,0.06);line-height:1.65}
+/* ─── ACCORDION ─── */
+.secao{border:1px solid var(--border);border-radius:13px;background:var(--white);margin-bottom:12px;overflow:hidden;transition:all .18s var(--ease)}
+.secao:hover{border-color:var(--gold-border);box-shadow:0 6px 24px rgba(0,0,0,0.04)}
+.secao-hd{padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none}
+.sec-badge{font-size:9.5px;font-weight:700;background:var(--black);color:var(--gold);padding:4px 11px;border-radius:6px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.sec-badge.b-gold{background:var(--gold);color:var(--black)}
+.sec-badge.b-green{background:var(--green);color:#fff}
+.sec-badge.b-red{background:var(--red);color:#fff}
+.sec-badge.b-gray{background:var(--gray-light);color:#555;border:1px solid var(--border)}
+.secao-hd h3{font-size:14.5px;font-weight:700;flex:1}
+.secao-hd .chev{font-size:10px;font-weight:700;color:var(--gold);transition:transform .2s}
+.secao-hd.open .chev{transform:rotate(180deg)}
+.secao-body{display:none;border-top:1px solid var(--border);padding:22px 24px;background:var(--white)}
+.secao-body.open{display:block;animation:fadeIn .18s ease-out}
+.secao-body>p{font-size:13px;color:#444;line-height:1.75;margin-bottom:14px}
+/* ─── TABLES ─── */
+.tb-wrap{border:1px solid var(--border);border-radius:11px;overflow:hidden;background:var(--white);margin-bottom:16px}
+.tb{width:100%;border-collapse:collapse}
+.tb th{background:var(--gray-light);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:11px 16px;border-bottom:1px solid var(--border);text-align:left;color:#555}
+.tb td{padding:11px 16px;font-size:12.5px;font-weight:500;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
+.tb tr:last-child td{border-bottom:none}
+.tb .td-k{font-weight:700;background:rgba(0,0,0,0.015);width:28%}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;border:1px solid;white-space:nowrap}
+.tag-gold{background:var(--gold-glow);color:var(--gold-dark);border-color:var(--gold-border)}
+.tag-green{background:rgba(30,158,106,0.1);color:#14683f;border-color:rgba(30,158,106,0.3)}
+.tag-blue{background:rgba(59,130,246,0.1);color:#1E40AF;border-color:rgba(59,130,246,0.3)}
+.tag-red{background:rgba(217,83,79,0.1);color:#a02622;border-color:rgba(217,83,79,0.3)}
+.tag-dark{background:var(--black);color:var(--gold);border-color:var(--black)}
+.tag-gray{background:var(--gray-light);color:#555;border-color:var(--border)}
+/* ─── LISTAS ─── */
+.lst{list-style:none}
+.lst li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:12.5px;font-weight:500;border-bottom:1px solid var(--border);line-height:1.55}
+.lst li:last-child{border-bottom:none}
+.l-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:7px}
+/* ═══ SIMULADOR ═══ */
+.sim-intro{margin-bottom:18px}
+.scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.scenario-card{border:1px solid var(--border);border-radius:13px;padding:17px 20px;cursor:pointer;background:var(--white);transition:all .16s var(--ease);position:relative;overflow:hidden}
+.scenario-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:transparent;transition:background .2s}
+.scenario-card:hover{border-color:var(--gold-border);box-shadow:0 6px 24px rgba(0,0,0,0.05);transform:translateY(-2px)}
+.scenario-card.selected{border-color:var(--gold);box-shadow:0 8px 30px rgba(214,166,60,0.14)}
+.scenario-card.selected::before{background:var(--gold)}
+.sc-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}
+.sc-tag.green{color:var(--green)}.sc-tag.blue{color:var(--blue)}.sc-tag.gold{color:var(--gold-dark)}.sc-tag.red{color:var(--red)}
+.scenario-card h4{font-size:13.5px;font-weight:700;margin-bottom:6px;line-height:1.35}
+.scenario-card p{font-size:11.5px;color:var(--gray);line-height:1.6}
+.sim-actions{display:flex;gap:12px;margin-bottom:22px}
+.btn-start{background:var(--black);color:var(--white);border:none;border-radius:9px;padding:13px 28px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--f);transition:all .18s var(--ease);box-shadow:0 4px 14px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:8px}
+.btn-start .go{color:var(--gold)}
+.btn-start:hover{background:#242424;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.16)}
+.btn-start:disabled{opacity:.5;cursor:default;transform:none}
+.btn-reset{background:var(--white);color:var(--black);border:1px solid var(--border);border-radius:9px;padding:13px 28px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--f);transition:all .16s}
+.btn-reset:hover{border-color:var(--gold-border);background:var(--gold-glow)}
+.sim-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.sim-panel{background:#141414;border:1px solid rgba(214,166,60,0.18);border-radius:15px;overflow:hidden;display:flex;flex-direction:column;min-height:440px;box-shadow:0 14px 44px rgba(0,0,0,0.14)}
+.sp-hd{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0}
+.sp-title{font-size:12.5px;font-weight:700;color:#F5F5F5}
+.sp-title b{color:var(--gold);font-weight:700}
+.sp-sub{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px}
+.sp-status{font-size:9.5px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid;white-space:nowrap;margin-left:10px;letter-spacing:.05em}
+.ss-idle{color:rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.15)}
+.ss-running{color:var(--gold);border-color:var(--gold);animation:pulseSt 1.5s infinite}
+.ss-done{color:#4ADE80;border-color:#4ADE80}
+@keyframes pulseSt{0%,100%{opacity:1}50%{opacity:.5}}
+.chat-body{flex:1;padding:14px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;min-height:0}
+.msg-row{display:flex;flex-direction:column;max-width:86%}
+.msg-row.user{align-self:flex-end;align-items:flex-end}
+.msg-row.bot{align-self:flex-start;align-items:flex-start}
+.msg-label{font-size:9.5px;font-weight:700;color:rgba(214,166,60,0.75);margin-bottom:3px;letter-spacing:.03em}
+.msg-bubble{padding:10px 14px;border-radius:13px;font-size:12px;line-height:1.55}
+.msg-row.user .msg-bubble{background:#262626;color:#E5E5E5;border-radius:13px 13px 3px 13px}
+.msg-row.bot .msg-bubble{background:rgba(214,166,60,0.14);color:#EBD9AE;border:1px solid rgba(214,166,60,0.18);border-radius:13px 13px 13px 3px;font-weight:400}
+.typing-indicator{display:none;padding:11px 14px;background:rgba(214,166,60,0.1);border-radius:13px 13px 13px 3px;align-self:flex-start}
+.typing-indicator.show{display:flex;gap:4px;align-items:center}
+.ti-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.6;animation:tidot 1.2s infinite}
+.ti-dot:nth-child(2){animation-delay:.2s}.ti-dot:nth-child(3){animation-delay:.4s}
+@keyframes tidot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.wh-body{flex:1;padding:16px 18px;font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.75;overflow-y:auto;min-height:0}
+.wh-line{display:block;white-space:pre-wrap}
+.wh-cmd{color:#F5F5F5;font-weight:700}
+.wh-brace{color:#8a8a8a}
+.wh-key{color:var(--gold)}
+.wh-val{color:#86EFAC}
+.wh-ok{color:#4ADE80;font-weight:700}
+.wh-note{color:#7DB2F8}
+.pl-body{flex:1;padding:14px 16px;overflow-y:auto;min-height:0}
+.pl-stage{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.pl-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,0.3);width:72px;flex-shrink:0;padding-top:10px;line-height:1.35}
+.pl-slot{flex:1;min-height:38px;border:1px dashed rgba(255,255,255,0.12);border-radius:8px;padding:4px;transition:all .35s}
+.pl-slot.active{border-style:solid;border-width:1.5px}
+.pl-slot.active-green{border-color:var(--green);background:rgba(30,158,106,0.08)}
+.pl-slot.active-blue{border-color:var(--blue);background:rgba(59,130,246,0.08)}
+.pl-slot.active-gold{border-color:var(--gold);background:rgba(214,166,60,0.08)}
+.pl-slot.active-red{border-color:var(--red);background:rgba(217,83,79,0.08)}
+.pl-card{border-radius:6px;padding:8px 10px;font-size:11px;line-height:1.4;transition:all .35s}
+.pl-card .pc-title{font-weight:700;margin-bottom:1px}
+.pl-card .pc-sub{font-size:10px;opacity:.75}
+.pl-card .pc-badge{display:inline-block;font-size:8.5px;font-weight:700;padding:1px 8px;border-radius:8px;margin-top:5px;letter-spacing:.04em}
+.pl-card.card-green{background:var(--green);color:#fff}
+.pl-card.card-green .pc-badge{background:rgba(0,0,0,0.22);color:#D9F7E8}
+.pl-card.card-blue{background:var(--blue);color:#fff}
+.pl-card.card-blue .pc-badge{background:rgba(0,0,0,0.22);color:#DBEAFE}
+.pl-card.card-gold{background:var(--gold);color:var(--black)}
+.pl-card.card-gold .pc-badge{background:rgba(0,0,0,0.14);color:#3d2e08}
+.pl-card.card-red{background:var(--red);color:#fff}
+.pl-card.card-red .pc-badge{background:rgba(0,0,0,0.22);color:#FEE2E2}
+.sim-idle-msg{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:200px;text-align:center;color:rgba(255,255,255,0.25);font-size:12px;font-weight:500;gap:8px;padding:20px}
+.idle-icon{font-size:26px;opacity:.8}
+/* ═══ KANBAN ═══ */
+.kb-pills{display:inline-flex;flex-wrap:wrap;gap:6px;margin-bottom:22px;background:var(--white);border:1px solid var(--border);border-radius:11px;padding:5px}
+.kb-pill{padding:8px 18px;font-size:12.5px;font-weight:600;cursor:pointer;border-radius:8px;transition:all .13s;color:var(--gray);background:transparent;border:none;font-family:var(--f)}
+.kb-pill:hover{background:var(--gold-glow);color:var(--black)}
+.kb-pill.active{background:var(--black);color:var(--white)}
+.kb-board-wrap{display:none}
+.kb-board-wrap.active{display:block;animation:fadeIn .2s ease-out}
+.kb-board{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
+.kb-col{background:var(--white);border:1px solid var(--border);border-radius:12px;min-width:218px;width:218px;flex-shrink:0}
+.kb-col-hd{padding:12px 14px;border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.kb-col-hd.gold{border-bottom-color:var(--gold)}
+.kb-col-hd.green{border-bottom-color:var(--green)}
+.kb-col-hd.blue{border-bottom-color:var(--blue)}
+.kb-col-hd.red{border-bottom-color:var(--red)}
+.kb-col-hd.dark{border-bottom-color:var(--black)}
+.kb-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.kb-count{font-size:10px;font-weight:700;background:var(--gray-light);border:1px solid var(--border);border-radius:20px;padding:1px 8px;color:var(--gray)}
+.kb-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:52px}
+.kb-card{border:1px solid var(--border);border-radius:9px;padding:11px 12px;background:var(--white);box-shadow:0 2px 8px rgba(0,0,0,0.03);transition:all .15s}
+.kb-card:hover{border-color:var(--gold-border);transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,0,0,0.06)}
+.kb-card .t{font-size:12px;font-weight:700;line-height:1.3}
+.kb-card .s{font-size:10.5px;color:var(--gray);margin-top:3px;line-height:1.45}
+.kb-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.kb-empty{font-size:10.5px;color:#bbb;text-align:center;padding:8px 0;font-weight:500}
+.kb-note{font-size:11.5px;color:var(--gray);margin:-8px 0 16px;line-height:1.6;max-width:800px}
+/* ═══ INTEGRAÇÕES ═══ */
+.int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.int-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--white);transition:all .18s var(--ease)}
+.int-card:hover{border-color:var(--gold-border);box-shadow:0 8px 28px rgba(0,0,0,0.05)}
+.ich{background:var(--black);color:var(--white);padding:12px 16px;font-size:12px;font-weight:700;letter-spacing:.03em;display:flex;align-items:center;gap:8px}
+.ich .idot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.icb{padding:14px 16px}
+.int-row{font-size:12px;margin-bottom:7px;display:flex;gap:8px;line-height:1.5;color:#444}
+.int-row .dot{color:var(--gold);font-weight:700;flex-shrink:0}
+.int-role{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gold-dark);margin-bottom:9px}
+/* ─── RESPONSIVE ─── */
+@media(max-width:1180px){.sim-cols{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}.int-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:880px){.scenario-grid{grid-template-columns:1fr}.feat-grid{grid-template-columns:1fr}}
+@media(max-width:768px){
+ .sidebar{transform:translateX(-100%);transition:transform .3s var(--ease);top:57px;width:100%;height:calc(100vh - 57px)}
+ .sidebar.open{transform:translateX(0)}
+ .mobile-header{display:flex}
+ .main{margin-left:0}
+ .proj-header{padding:22px 18px 0}
+ .content{padding:22px 18px}
+ .kpi-row,.int-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-
-<!-- ════ NAV ════════════════════════════════════════════ -->
-<nav class="nav" id="site-nav">
-  <div class="nav-inner">
-    <a href="#" class="nav-brand">
-      <div class="nav-mark">
-        <span></span><span></span><span></span>
-      </div>
-      <span class="nav-wordmark">Traevo <b>GovTech</b></span>
-    </a>
-    <ul class="nav-links">
-      <li><a href="#plataforma">Plataforma</a></li>
-      <li><a href="#metodologias">Metodologias</a></li>
-      <li><a href="#ecossistema">Ecossistema</a></li>
-      <li><a href="#segmentos">Segmentos</a></li>
-      <li class="nav-cta"><a href="#contato">Iniciar Evolução</a></li>
-    </ul>
-    <button class="menu-toggle" id="mobile-menu-btn" aria-label="Abrir menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+<!-- MOBILE HEADER -->
+<header class="mobile-header">
+  <div class="mh-brand">
+    <div class="sb-mark" style="width:26px;height:26px;padding:6px 5px;gap:2.5px"><span></span><span></span><span></span></div>
+    Traevo <b>GovTech</b>
   </div>
-</nav>
+  <button class="menu-toggle" onclick="toggleSidebar()">Menu</button>
+</header>
 
-<!-- Mobile menu overlay -->
-<div class="nav-mobile-overlay" id="mobile-menu-overlay">
-  <a href="#plataforma" class="mobile-link">Plataforma</a>
-  <a href="#metodologias" class="mobile-link">Metodologias</a>
-  <a href="#ecossistema" class="mobile-link">Ecossistema</a>
-  <a href="#segmentos" class="mobile-link">Segmentos</a>
-  <a href="#contato" class="mobile-link" style="color: var(--gold); font-weight: 700;">Falar com Especialista</a>
-</div>
-
-<!-- ════ HERO ════════════════════════════════════════════ -->
-<section id="hero">
-  <div class="hero-left">
-    <div class="hero-label">Infraestrutura Institucional</div>
-    <h1 class="hero-h1">A modernização institucional começa pela forma como tudo se conecta.</h1>
-    <p class="hero-sub">Estruturas institucionais mais integradas, inteligentes e preparadas para o futuro da administração pública.</p>
-    <div class="hero-actions">
-      <a href="#plataforma" class="btn btn-dark">
-        Explorar a plataforma
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-          <path d="M2.5 7.5h10M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-      <a href="#contato" class="btn btn-ghost">
-        Conversar com especialistas
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M2 6.5h9M7.5 3l3.5 3.5L7.5 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="val">8<em>+</em></div>
-        <div class="lbl">Segmentos atendidos</div>
-      </div>
-      <div class="hero-stat">
-        <div class="val">3</div>
-        <div class="lbl">Metodologias próprias</div>
-      </div>
-      <div class="hero-stat">
-        <div class="val">100<em>%</em></div>
-        <div class="lbl">Integração operacional</div>
-      </div>
+<!-- SIDEBAR -->
+<aside class="sidebar" id="app-sidebar">
+  <div class="sb-brand">
+    <div class="sb-mark"><span></span><span></span><span></span></div>
+    <div class="bx">
+      <div class="name">Traevo <b>GovTech</b></div>
+      <div class="org">Plataforma Institucional</div>
     </div>
   </div>
 
-  <div class="hero-right">
-    <svg id="hero-svg" viewBox="0 0 640 760" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <radialGradient id="bg-warm" cx="50%" cy="54%" r="52%">
-          <stop offset="0%" stop-color="#F7EDDA" stop-opacity="0.55"/>
-          <stop offset="100%" stop-color="#F7EDDA" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="ng-sm" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#D6A63C" stop-opacity="0.38"/>
-          <stop offset="55%" stop-color="#D6A63C" stop-opacity="0.08"/>
-          <stop offset="100%" stop-color="#D6A63C" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="ng-lg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#D6A63C" stop-opacity="0.50"/>
-          <stop offset="50%" stop-color="#D6A63C" stop-opacity="0.12"/>
-          <stop offset="100%" stop-color="#D6A63C" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
+  <div class="sb-label">Núcleo Ativo · GRI</div>
+  <div class="sb-item active" id="sb-visao" onclick="show('visao')"><span class="sb-dot"></span>Visão Geral do GRI</div>
+  <div class="sb-item" id="sb-sim" onclick="show('sim')"><span class="sb-dot"></span>Simulação de IA</div>
+  <div class="sb-item" id="sb-kanban" onclick="show('kanban')"><span class="sb-dot"></span>Kanbans de Atendimento</div>
+  <div class="sb-item" id="sb-know" onclick="show('know')"><span class="sb-dot"></span>Gestão de Conhecimento</div>
+  <div class="sb-item" id="sb-int" onclick="show('int')"><span class="sb-dot"></span>Integrações &amp; Plataformas</div>
 
-      <ellipse cx="340" cy="400" rx="310" ry="290" fill="url(#bg-warm)"/>
+  <div class="sb-label">Plataforma Institucional</div>
+  <div class="sb-item soon"><span class="sb-dot"></span>Central de Atendimento<span class="soon-chip">Em breve</span></div>
+  <div class="sb-item soon"><span class="sb-dot"></span>Conexões Inteligentes<span class="soon-chip">Em breve</span></div>
+  <div class="sb-item soon"><span class="sb-dot"></span>Método Vértice<span class="soon-chip">Em breve</span></div>
 
-      <!-- REDE CINZA DE FUNDO -->
-      <g stroke="rgba(155,145,135,0.22)" stroke-width="0.75" fill="none">
-        <line x1="280" y1="62" x2="420" y2="95"/>
-        <line x1="280" y1="62" x2="350" y2="172"/>
-        <line x1="280" y1="62" x2="175" y2="122"/>
-        <line x1="280" y1="62" x2="522" y2="52"/>
-        <line x1="522" y1="52" x2="420" y2="95"/>
-        <line x1="522" y1="52" x2="490" y2="192"/>
-        <line x1="175" y1="122" x2="90" y2="300"/>
-        <line x1="175" y1="122" x2="350" y2="172"/>
-        <line x1="175" y1="122" x2="232" y2="352"/>
-        <line x1="350" y1="172" x2="420" y2="95"/>
-        <line x1="350" y1="172" x2="490" y2="192"/>
-        <line x1="350" y1="172" x2="310" y2="415"/>
-        <line x1="350" y1="172" x2="442" y2="312"/>
-        <line x1="490" y1="192" x2="555" y2="295"/>
-        <line x1="490" y1="192" x2="442" y2="312"/>
-        <line x1="172" y1="252" x2="90" y2="300"/>
-        <line x1="172" y1="252" x2="232" y2="352"/>
-        <line x1="172" y1="252" x2="175" y2="122"/>
-        <line x1="442" y1="312" x2="555" y2="295"/>
-        <line x1="442" y1="312" x2="310" y2="415"/>
-        <line x1="442" y1="312" x2="482" y2="422"/>
-        <line x1="232" y1="352" x2="90" y2="300"/>
-        <line x1="232" y1="352" x2="310" y2="415"/>
-        <line x1="232" y1="352" x2="152" y2="442"/>
-        <line x1="482" y1="422" x2="555" y2="295"/>
-        <line x1="482" y1="422" x2="490" y2="585"/>
-        <line x1="482" y1="422" x2="392" y2="492"/>
-        <line x1="482" y1="422" x2="582" y2="492"/>
-        <line x1="152" y1="442" x2="90" y2="300"/>
-        <line x1="152" y1="442" x2="155" y2="595"/>
-        <line x1="152" y1="442" x2="252" y2="532"/>
-        <line x1="392" y1="492" x2="310" y2="415"/>
-        <line x1="392" y1="492" x2="490" y2="585"/>
-        <line x1="392" y1="492" x2="442" y2="542"/>
-        <line x1="582" y1="492" x2="555" y2="295"/>
-        <line x1="582" y1="492" x2="490" y2="585"/>
-        <line x1="252" y1="532" x2="155" y2="595"/>
-        <line x1="252" y1="532" x2="310" y2="415"/>
-        <line x1="252" y1="532" x2="332" y2="642"/>
-        <line x1="442" y1="542" x2="490" y2="585"/>
-        <line x1="442" y1="542" x2="332" y2="642"/>
-        <line x1="82" y1="552" x2="155" y2="595"/>
-        <line x1="82" y1="552" x2="90" y2="300"/>
-        <line x1="82" y1="552" x2="102" y2="682"/>
-        <line x1="332" y1="642" x2="490" y2="585"/>
-        <line x1="332" y1="642" x2="155" y2="595"/>
-        <line x1="332" y1="642" x2="572" y2="642"/>
-        <line x1="572" y1="642" x2="490" y2="585"/>
-        <line x1="572" y1="642" x2="582" y2="492"/>
-        <line x1="102" y1="682" x2="155" y2="595"/>
-        <line x1="280" y1="62" x2="175" y2="122"/>
-        <line x1="172" y1="252" x2="232" y2="352"/>
-      </g>
-
-      <!-- CONEXÕES DOURADAS ENTRE OS 6 NÓS PRINCIPAIS -->
-      <path id="p13" d="M 420,95 C 400,222 368,328 310,415" stroke="rgba(214,166,60,0.60)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-      <path id="p23" d="M 555,295 C 488,342 418,382 310,415" stroke="rgba(214,166,60,0.54)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <path id="p34" d="M 310,415 C 238,388 168,352 90,300" stroke="rgba(214,166,60,0.57)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-      <path id="p35" d="M 310,415 C 258,482 208,538 155,595" stroke="rgba(214,166,60,0.52)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <path id="p36" d="M 310,415 C 382,472 432,528 490,585" stroke="rgba(214,166,60,0.55)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <path id="p12" d="M 420,95 C 502,152 548,212 555,295" stroke="rgba(214,166,60,0.36)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-      <path id="p14" d="M 420,95 C 298,132 178,202 90,300" stroke="rgba(214,166,60,0.30)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-      <path id="p26" d="M 555,295 C 562,422 532,512 490,585" stroke="rgba(214,166,60,0.32)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
-      <path id="p45" d="M 90,300 C 78,422 108,512 155,595" stroke="rgba(214,166,60,0.28)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
-      <path id="p56" d="M 155,595 C 272,642 382,642 490,585" stroke="rgba(214,166,60,0.26)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
-
-      <!-- TRAVELERS -->
-      <g opacity="0"><circle r="3.2" fill="#D6A63C"/>
-        <animateMotion dur="4.0s" repeatCount="indefinite" begin="0s" calcMode="easeInOut"><mpath href="#p13"/></animateMotion>
-        <animate attributeName="opacity" values="0;0.88;0.80;0" keyTimes="0;0.08;0.86;1" dur="4.0s" repeatCount="indefinite" begin="0s"/>
-      </g>
-      <g opacity="0"><circle r="2.8" fill="#D6A63C"/>
-        <animateMotion dur="3.8s" repeatCount="indefinite" begin="0.9s" calcMode="easeInOut"><mpath href="#p34"/></animateMotion>
-        <animate attributeName="opacity" values="0;0.80;0.72;0" keyTimes="0;0.09;0.86;1" dur="3.8s" repeatCount="indefinite" begin="0.9s"/>
-      </g>
-      <g opacity="0"><circle r="2.6" fill="#D6A63C"/>
-        <animateMotion dur="4.4s" repeatCount="indefinite" begin="1.8s" calcMode="easeInOut"><mpath href="#p36"/></animateMotion>
-        <animate attributeName="opacity" values="0;0.76;0.68;0" keyTimes="0;0.08;0.86;1" dur="4.4s" repeatCount="indefinite" begin="1.8s"/>
-      </g>
-      <g opacity="0"><circle r="2.3" fill="#D6A63C"/>
-        <animateMotion dur="3.9s" repeatCount="indefinite" begin="2.7s" calcMode="easeInOut"><mpath href="#p23"/></animateMotion>
-        <animate attributeName="opacity" values="0;0.70;0.62;0" keyTimes="0;0.09;0.86;1" dur="3.9s" repeatCount="indefinite" begin="2.7s"/>
-      </g>
-      <g opacity="0"><circle r="2.4" fill="#D6A63C"/>
-        <animateMotion dur="4.6s" repeatCount="indefinite" begin="3.5s" calcMode="easeInOut"><mpath href="#p35"/></animateMotion>
-        <animate attributeName="opacity" values="0;0.72;0.64;0" keyTimes="0;0.09;0.86;1" dur="4.6s" repeatCount="indefinite" begin="3.5s"/>
-      </g>
-      <g opacity="0"><circle r="2.0" fill="#D6A63C"/>
-        <animateMotion dur="4.8s" repeatCount="indefinite" begin="4.3s" calcMode="easeInOut"><mpath href="#p56"/></animateMotion>
-        <animate attributeName="opacity" values="0;0.60;0.52;0" keyTimes="0;0.10;0.86;1" dur="4.8s" repeatCount="indefinite" begin="4.3s"/>
-      </g>
-
-      <!-- NÓS CINZAS DE FUNDO -->
-      <g fill="rgba(138,128,118,0.52)">
-        <circle cx="280" cy="62" r="2.2"/><circle cx="522" cy="52" r="1.8"/>
-        <circle cx="175" cy="122" r="2.0"/><circle cx="350" cy="172" r="2.4"/>
-        <circle cx="490" cy="192" r="2.0"/><circle cx="172" cy="252" r="1.8"/>
-        <circle cx="442" cy="312" r="2.2"/><circle cx="232" cy="352" r="2.0"/>
-        <circle cx="482" cy="422" r="2.2"/><circle cx="152" cy="442" r="1.8"/>
-        <circle cx="392" cy="492" r="2.0"/><circle cx="582" cy="492" r="1.8"/>
-        <circle cx="252" cy="532" r="2.0"/><circle cx="442" cy="542" r="2.0"/>
-        <circle cx="82" cy="552" r="1.8"/><circle cx="332" cy="642" r="2.2"/>
-        <circle cx="572" cy="642" r="1.8"/><circle cx="102" cy="682" r="1.8"/>
-      </g>
-
-      <!-- HALOS DOURADOS -->
-      <ellipse cx="420" cy="95" rx="46" ry="46" fill="url(#ng-sm)" style="animation:glowBreath 4s ease-in-out infinite;"/>
-      <ellipse cx="555" cy="295" rx="38" ry="38" fill="url(#ng-sm)" style="animation:glowBreath 5s .5s ease-in-out infinite;"/>
-      <ellipse cx="310" cy="415" rx="64" ry="64" fill="url(#ng-lg)" style="animation:glowBreath 4.5s 1s ease-in-out infinite;"/>
-      <ellipse cx="90" cy="300" rx="38" ry="38" fill="url(#ng-sm)" style="animation:glowBreath 5.5s 1.5s ease-in-out infinite;"/>
-      <ellipse cx="155" cy="595" rx="34" ry="34" fill="url(#ng-sm)" style="animation:glowBreath 4.8s 2s ease-in-out infinite;"/>
-      <ellipse cx="490" cy="585" rx="34" ry="34" fill="url(#ng-sm)" style="animation:glowBreath 5.2s 2.5s ease-in-out infinite;"/>
-
-      <!-- NÓS PRINCIPAIS -->
-      <circle cx="310" cy="415" r="32" fill="rgba(214,166,60,0.06)" style="animation:nodeRing 3.0s ease-out infinite;transform-origin:310px 415px;"/>
-      <circle cx="310" cy="415" r="19" fill="none" stroke="rgba(214,166,60,0.34)" stroke-width="1.5"/>
-      <circle cx="310" cy="415" r="8" fill="rgba(214,166,60,0.92)" style="animation:nodeCore 3s ease-in-out infinite;"/>
-
-      <circle cx="420" cy="95" r="17" fill="rgba(214,166,60,0.05)" style="animation:nodeRing 3.5s .4s ease-out infinite;transform-origin:420px 95px;"/>
-      <circle cx="420" cy="95" r="11" fill="none" stroke="rgba(214,166,60,0.32)" stroke-width="1.2"/>
-      <circle cx="420" cy="95" r="5.5" fill="rgba(214,166,60,0.86)" style="animation:nodeCore 3.5s .4s ease-in-out infinite;"/>
-
-      <circle cx="555" cy="295" r="16" fill="rgba(214,166,60,0.05)" style="animation:nodeRing 3.8s .8s ease-out infinite;transform-origin:555px 295px;"/>
-      <circle cx="555" cy="295" r="10" fill="none" stroke="rgba(214,166,60,0.30)" stroke-width="1.2"/>
-      <circle cx="555" cy="295" r="5" fill="rgba(214,166,60,0.83)" style="animation:nodeCore 3.8s .8s ease-in-out infinite;"/>
-
-      <circle cx="90" cy="300" r="16" fill="rgba(214,166,60,0.05)" style="animation:nodeRing 4.0s 1.2s ease-out infinite;transform-origin:90px 300px;"/>
-      <circle cx="90" cy="300" r="10" fill="none" stroke="rgba(214,166,60,0.30)" stroke-width="1.2"/>
-      <circle cx="90" cy="300" r="5" fill="rgba(214,166,60,0.80)" style="animation:nodeCore 4.0s 1.2s ease-in-out infinite;"/>
-
-      <circle cx="155" cy="595" r="15" fill="rgba(214,166,60,0.05)" style="animation:nodeRing 4.2s 1.8s ease-out infinite;transform-origin:155px 595px;"/>
-      <circle cx="155" cy="595" r="9" fill="none" stroke="rgba(214,166,60,0.28)" stroke-width="1.2"/>
-      <circle cx="155" cy="595" r="4.5" fill="rgba(214,166,60,0.78)" style="animation:nodeCore 4.2s 1.8s ease-in-out infinite;"/>
-
-      <circle cx="490" cy="585" r="15" fill="rgba(214,166,60,0.05)" style="animation:nodeRing 3.9s 2.2s ease-out infinite;transform-origin:490px 585px;"/>
-      <circle cx="490" cy="585" r="9" fill="none" stroke="rgba(214,166,60,0.28)" stroke-width="1.2"/>
-      <circle cx="490" cy="585" r="4.5" fill="rgba(214,166,60,0.78)" style="animation:nodeCore 3.9s 2.2s ease-in-out infinite;"/>
-
-      <!-- LABELS -->
-      <g style="animation:labelFloat 6.5s 0s ease-in-out infinite;">
-        <rect x="172" y="42" width="242" height="40" rx="9" fill="white" stroke="rgba(214,166,60,0.22)" stroke-width="1"/>
-        <rect x="172" y="42" width="3" height="40" rx="1.5" fill="#D6A63C"/>
-        <text x="187" y="61" font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="600" fill="#111111">Gestão de Relacionamento</text>
-        <text x="187" y="75" font-family="Inter,system-ui,sans-serif" font-size="10" font-weight="400" fill="#888888">Institucional Integrado</text>
-      </g>
-      <g style="animation:labelFloat 6.5s 1.2s ease-in-out infinite;">
-        <rect x="388" y="272" width="180" height="33" rx="8" fill="white" stroke="rgba(214,166,60,0.20)" stroke-width="1"/>
-        <circle cx="402" cy="288.5" r="3.5" fill="#D6A63C"/>
-        <text x="412" y="293" font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="600" fill="#111111">Governança Conectada</text>
-      </g>
-      <g style="animation:labelFloat 6.5s 2.4s ease-in-out infinite;">
-        <rect x="162" y="432" width="214" height="33" rx="8" fill="white" stroke="rgba(214,166,60,0.20)" stroke-width="1"/>
-        <circle cx="176" cy="448.5" r="3.5" fill="#D6A63C"/>
-        <text x="186" y="453" font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="600" fill="#111111">Fluxos Inteligentes e Contínuos</text>
-      </g>
-      <g style="animation:labelFloat 6.5s 0.7s ease-in-out infinite;">
-        <rect x="20" y="272" width="178" height="33" rx="8" fill="white" stroke="rgba(214,166,60,0.20)" stroke-width="1"/>
-        <circle cx="34" cy="288.5" r="3.5" fill="#D6A63C"/>
-        <text x="44" y="293" font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="600" fill="#111111">Comunicação Unificada</text>
-      </g>
-      <g style="animation:labelFloat 6.5s 1.9s ease-in-out infinite;">
-        <rect x="20" y="610" width="192" height="33" rx="8" fill="white" stroke="rgba(214,166,60,0.20)" stroke-width="1"/>
-        <circle cx="34" cy="626.5" r="3.5" fill="#D6A63C"/>
-        <text x="44" y="631" font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="600" fill="#111111">Inteligência Operacional</text>
-      </g>
-      <g style="animation:labelFloat 6.5s 3.1s ease-in-out infinite;">
-        <rect x="370" y="610" width="196" height="33" rx="8" fill="white" stroke="rgba(214,166,60,0.20)" stroke-width="1"/>
-        <circle cx="384" cy="626.5" r="3.5" fill="#D6A63C"/>
-        <text x="394" y="631" font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="600" fill="#111111">Infraestrutura Escalável</text>
-      </g>
-      <g opacity="0.22" style="animation:labelFloat 2.8s ease-in-out infinite;">
-        <rect x="291" y="712" width="58" height="34" rx="17" fill="none" stroke="#bbb" stroke-width="1"/>
-        <rect x="317" y="722" width="6" height="10" rx="3" fill="#bbb" style="animation:nodeCore 2s ease-in-out infinite;"/>
-      </g>
-    </svg>
+  <div class="sb-footer">
+    <div class="sb-avatar">NM</div>
+    <div class="sb-finfo">
+      <div class="name">Nelly Miranda</div>
+      <div class="email">nelly.miranda@traevo.com.br</div>
+    </div>
   </div>
-</section>
+</aside>
 
-<!-- ════ FILOSOFIA ════════════════════════════════════════ -->
-<section id="filosofia">
-  <div class="inner">
-    <div class="tag">Filosofia</div>
-    <p class="manifesto">
-      Quando <em>processos bem estruturados</em> encontram uma base tecnológica robusta e interfaces fluidas, a <em>produtividade institucional</em> sobe de nível.
-    </p>
-    <div class="divider"></div>
-    <p class="sub">
-      A Traevo GovTech não é uma empresa de software comum. É uma parceira de clareza operacional institucional. A tecnologia é o nosso meio.
-    </p>
+<!-- MAIN -->
+<main class="main">
+  <div class="proj-header">
+    <div class="proj-title-row">
+      <span class="proj-title">GRI — Gestão de Relacionamento Institucional</span>
+      <span class="chip chip-nucleo">Núcleo <b>01</b></span>
+      <span class="chip chip-gold">CRM Institucional Integrado</span>
+      <span class="chip chip-proto">Protótipo</span>
+    </div>
+    <div class="proj-desc">Atendimento ao profissional com IA AssistPro integrada ao Bitrix24 · Kanbans separados por setor + kanban exclusivo da IA · Escalada inteligente por sentimento, complexidade e intenção · Baseado no mapeamento CRCDF (1.257 automações, 15 pipelines, 7+ setores).</div>
+    <div class="tabs">
+      <div class="tab active" id="tab-visao" onclick="show('visao')"><span class="tab-ico">◈</span>Visão Geral</div>
+      <div class="tab" id="tab-sim" onclick="show('sim')"><span class="tab-ico">▶</span>Simulação de IA</div>
+      <div class="tab" id="tab-kanban" onclick="show('kanban')"><span class="tab-ico">▦</span>Kanbans</div>
+      <div class="tab" id="tab-know" onclick="show('know')"><span class="tab-ico">✦</span>Gestão de Conhecimento</div>
+      <div class="tab" id="tab-int" onclick="show('int')"><span class="tab-ico">⇄</span>Integrações</div>
+    </div>
   </div>
-</section>
 
-<!-- ════ PLATAFORMA ══════════════════════════════════════ -->
-<section id="plataforma">
-  <div class="s-wrap">
-    <div class="s-label">Plataforma Institucional</div>
-    <div class="plat-grid">
-      <div class="plat-left reveal">
-        <h2>Infraestrutura inteligente para instituições que precisam avançar.</h2>
-        <p>A plataforma da Traevo GovTech unifica comunicação, processos, atendimento e gestão em uma única arquitetura operacional integrada — sem fragmentação, sem complexidade desnecessária.</p>
-        <div class="plat-features">
-          <div class="plat-feature">
-            <div class="plat-icon">
-              <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
-                <path d="M8.5 2L2 5.5l6.5 3.5 6.5-3.5L8.5 2zM2 11.5l6.5 3.5 6.5-3.5M2 8.5l6.5 3.5 6.5-3.5" stroke="#D6A63C" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div>
-              <h4>Governança Operacional</h4>
-              <p>Estruturas claras de decisão, responsabilidade e fluxo conectadas em tempo real.</p>
+  <div class="content">
+
+    <!-- ══════════ VISÃO GERAL ══════════ -->
+    <div class="tab-pane active" id="tp-visao">
+      <div class="kpi-row">
+        <div class="kpi"><label>Setores Integrados</label><div class="val">7<em>+</em></div><div class="sub">Atendimento · Cobrança · Registro · Desenv. Profissional · Assessoria · Jurídico · ADM/Licitação</div></div>
+        <div class="kpi"><label>Resolução pela IA</label><div class="val">~70<em>%</em></div><div class="sub">Sem intervenção humana — vs. ~30% do bot convencional de menus</div></div>
+        <div class="kpi"><label>Disponibilidade</label><div class="val">24<em>/7</em></div><div class="sub">Triagem, respostas e emissão de boletos a qualquer hora</div></div>
+        <div class="kpi"><label>Referência CRCDF</label><div class="val">1.257</div><div class="sub">Automações implementadas · 15 pipelines · +60% de eficiência</div></div>
+      </div>
+
+      <div class="sec-hd">
+        <div class="s-label">Arquitetura do Núcleo</div>
+        <h2>Quatro pilares do GRI</h2>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-num">PILAR 01</div>
+          <h3>Atendimento ao Profissional</h3>
+          <p>Recepção omnichannel (WhatsApp, e-mail, portal) unificada no Bitrix24. Histórico completo por profissional registrado, com rastreabilidade de cada interação e SLA automático.</p>
+          <div class="feat-tags"><span class="f-tag">WhatsApp Business API</span><span class="f-tag">Omnichannel</span><span class="f-tag">SLA</span></div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-num">PILAR 02</div>
+          <h3>IA AssistPro integrada ao CRM</h3>
+          <p>Substitui o bot convencional de menus numerados. Entende intenção em linguagem natural, consulta sistemas (financeiro, cadastro), resolve ~70% dos casos e escala apenas quando necessário.</p>
+          <div class="feat-tags"><span class="f-tag">NLP</span><span class="f-tag">Análise de Sentimento</span><span class="f-tag">Aprendizado Contínuo</span></div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-num">PILAR 03</div>
+          <h3>Kanbans por Setor + Kanban da IA</h3>
+          <p>Cada setor possui seu pipeline próprio no Bitrix24. A IA possui um kanban exclusivo onde os atendimentos em andamento por ela ficam visíveis — atendendo, aguardando dados, resolvido ou escalado.</p>
+          <div class="feat-tags"><span class="f-tag">Pipelines Bitrix24</span><span class="f-tag">Kanban IA</span><span class="f-tag">Roteamento</span></div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-num">PILAR 04</div>
+          <h3>Escalada Inteligente</h3>
+          <p>Gatilhos objetivos definem quando a IA transfere: sentimento negativo, pedido explícito de humano, assunto fora de alçada ou falha de compreensão. O card chega ao setor com dossiê completo da conversa.</p>
+          <div class="feat-tags"><span class="f-tag">Gatilhos</span><span class="f-tag">Dossiê Automático</span><span class="f-tag">Prioridade</span></div>
+        </div>
+      </div>
+
+      <div class="sec-hd">
+        <div class="s-label">Fluxo Macro</div>
+        <h2>Da mensagem ao pipeline do setor</h2>
+      </div>
+      <div class="flow-wrap">
+        <div class="flow-container">
+          <div class="flow-step">Profissional<small>WhatsApp · E-mail · Portal</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step gold">IA AssistPro<small>Triagem · NLP · Intenção</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Resolve?<small>FAQ · Status · Boletos</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step gold">Kanban IA<small>Resolvido 24/7</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Pipeline do Setor<small>Escalada com dossiê</small></div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Princípio Traevo:</strong> processo antes da tecnologia. Este protótipo materializa o diagnóstico do GRI — cada parâmetro da IA exibido na aba <strong>Gestão de Conhecimento</strong> é validado com a instituição antes da configuração no Bitrix24.
+      </div>
+    </div>
+
+    <!-- ══════════ SIMULAÇÃO DE IA ══════════ -->
+    <div class="tab-pane" id="tp-sim">
+      <div class="sim-intro sec-hd">
+        <div class="s-label">Ambiente de Simulação</div>
+        <h2>Simulação de IA — Atendimento ao Profissional</h2>
+        <p>Selecione um cenário e clique em <strong>Iniciar Simulação</strong>. Os três painéis mostram, em tempo real, a conversa no WhatsApp, as chamadas de integração e a movimentação no kanban da IA.</p>
+      </div>
+      <div class="scenario-grid" id="sc-gri"></div>
+      <div class="sim-actions">
+        <button class="btn-start" id="btn-start-gri" onclick="startSim()"><span class="go">▶</span> Iniciar Simulação</button>
+        <button class="btn-reset" onclick="resetSim()">↺ Reiniciar</button>
+      </div>
+      <div class="sim-cols">
+        <div class="sim-panel">
+          <div class="sp-hd">
+            <div><div class="sp-title">IA <b>AssistPro</b> · WhatsApp</div><div class="sp-sub">NLP · Canal Oficial · 24/7</div></div>
+            <span class="sp-status ss-idle" id="chat-status">AGUARDANDO</span>
+          </div>
+          <div class="chat-body" id="chat-body"><div class="sim-idle-msg"><span class="idle-icon">💬</span>Selecione um cenário e inicie a simulação</div></div>
+        </div>
+        <div class="sim-panel">
+          <div class="sp-hd">
+            <div><div class="sp-title">Integrações · <b>API</b></div><div class="sp-sub">Bitrix24 · Financeiro · Cadastro</div></div>
+            <span class="sp-status ss-idle" id="wh-status">AGUARDANDO</span>
+          </div>
+          <div class="wh-body" id="wh-body"><div class="sim-idle-msg"><span class="idle-icon">⚡</span>Aguardando início da simulação</div></div>
+        </div>
+        <div class="sim-panel">
+          <div class="sp-hd">
+            <div><div class="sp-title">Bitrix24 · <b>Kanban IA</b></div><div class="sp-sub">Pipeline exclusivo da IA</div></div>
+            <span class="sp-status ss-idle" id="pl-status">AGUARDANDO</span>
+          </div>
+          <div class="pl-body" id="pl-body"><div class="sim-idle-msg"><span class="idle-icon">▦</span>O kanban será atualizado durante a simulação</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ KANBANS ══════════ -->
+    <div class="tab-pane" id="tp-kanban">
+      <div class="sec-hd">
+        <div class="s-label">Estrutura de Pipelines</div>
+        <h2>Kanbans de Atendimento</h2>
+        <p>Um kanban exclusivo para a IA — onde ficam os atendimentos que ela conduz e escala — e kanbans separados por setor, que recebem apenas o que exige intervenção humana, já com dossiê completo.</p>
+      </div>
+      <div class="kb-pills" id="kb-pills"></div>
+      <div id="kb-boards"></div>
+    </div>
+
+    <!-- ══════════ GESTÃO DE CONHECIMENTO ══════════ -->
+    <div class="tab-pane" id="tp-know">
+      <div class="sec-hd">
+        <div class="s-label">Parâmetros da IA</div>
+        <h2>Gestão de Conhecimento — O que a IA faz, onde não atua e quando escala</h2>
+        <p>Base de regras que governa a IA AssistPro no GRI. Cada parâmetro abaixo é configurado no Bitrix24 e auditável — nenhuma decisão da IA acontece fora destes limites.</p>
+      </div>
+
+      <div class="secao">
+        <div class="secao-hd open" id="hd-k1" onclick="tog('k1')">
+          <span class="sec-badge b-green">Autonomia Total</span>
+          <h3>O que a IA resolve sozinha — sem escalada</h3>
+          <span class="chev">▼</span>
+        </div>
+        <div class="secao-body open" id="bd-k1">
+          <p>Interações resolvidas de ponta a ponta pela IA, 24/7, com registro automático no kanban da IA como <strong>Resolvido pela IA</strong>.</p>
+          <div class="tb-wrap">
+            <table class="tb">
+              <thead><tr><th>Serviço</th><th>Como a IA executa</th><th style="width:150px">Fonte de Dados</th></tr></thead>
+              <tbody>
+                <tr><td><strong>2ª via de boletos e anuidades</strong></td><td>Valida titularidade (CPF/registro), consulta débitos em aberto via API do sistema financeiro e envia o boleto atualizado na conversa</td><td><span class="tag tag-gold">Financeiro / ERP</span></td></tr>
+                <tr><td><strong>Situação financeira</strong></td><td>Informa débitos em aberto, valores, vencimentos e confirma pagamentos identificados</td><td><span class="tag tag-gold">Financeiro / ERP</span></td></tr>
+                <tr><td><strong>Status de registro profissional</strong></td><td>Consulta o cadastro no CRM e informa situação (ativo, pendente, em análise) e etapa do processo</td><td><span class="tag tag-dark">Bitrix24 CRM</span></td></tr>
+                <tr><td><strong>Certidão de regularidade</strong></td><td>Emite automaticamente quando o profissional está apto (sem débitos e registro ativo)</td><td><span class="tag tag-gold">Financeiro + CRM</span></td></tr>
+                <tr><td><strong>FAQ institucional</strong></td><td>Regulamentações, prazos, documentação exigida, horários, endereços e contatos</td><td><span class="tag tag-gray">Base de Conhecimento</span></td></tr>
+                <tr><td><strong>Agendamentos</strong></td><td>Agenda atendimento presencial ou callback, sincronizado com o calendário do setor</td><td><span class="tag tag-dark">Bitrix24 Calendário</span></td></tr>
+                <tr><td><strong>Protocolos</strong></td><td>Gera número de protocolo e registra a solicitação com data, hora e canal</td><td><span class="tag tag-dark">Bitrix24 CRM</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="secao">
+        <div class="secao-hd" id="hd-k2" onclick="tog('k2')">
+          <span class="sec-badge b-gold">Coleta &amp; Validação</span>
+          <h3>O que a IA coleta e valida antes de agir</h3>
+          <span class="chev">▼</span>
+        </div>
+        <div class="secao-body" id="bd-k2">
+          <p>Antes de acessar qualquer dado pessoal ou financeiro, a IA executa validação de titularidade. Nenhuma informação sensível é exibida sem confirmação.</p>
+          <ul class="lst">
+            <li><span class="l-dot"></span><span><strong>Identificação:</strong> nome completo, CPF/CNPJ, número de registro profissional — extraídos da conversa em linguagem natural, sem formulários rígidos</span></li>
+            <li><span class="l-dot"></span><span><strong>Validação cruzada:</strong> o telefone do WhatsApp é cruzado com o cadastro; divergência aciona confirmação adicional (dupla validação)</span></li>
+            <li><span class="l-dot"></span><span><strong>Documentos:</strong> recebe anexos, valida formato e completude, classifica por tipo e vincula ao card do profissional</span></li>
+            <li><span class="l-dot"></span><span><strong>Consentimento LGPD:</strong> registro de consentimento na primeira interação, com log auditável</span></li>
+            <li><span class="l-dot"></span><span><strong>Contexto:</strong> motivo do contato, urgência e histórico anterior — anexados ao card para o caso de escalada</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="secao">
+        <div class="secao-hd" id="hd-k3" onclick="tog('k3')">
+          <span class="sec-badge b-red">Gatilhos de Escalada</span>
+          <h3>Quando a IA escala para atendimento humano</h3>
+          <span class="chev">▼</span>
+        </div>
+        <div class="secao-body" id="bd-k3">
+          <p>A escalada é sempre acompanhada de <strong>dossiê automático</strong>: transcrição da conversa, dados validados, intenção detectada e ações já executadas. O atendente nunca recomeça do zero.</p>
+          <div class="tb-wrap">
+            <table class="tb">
+              <thead><tr><th>Gatilho</th><th>Destino (Pipeline)</th><th style="width:110px">Prioridade</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Sentimento negativo / reclamação</strong> — análise de sentimento detecta insatisfação ou reclamação formal</td><td>Supervisor de Atendimento</td><td><span class="tag tag-red">Alta</span></td></tr>
+                <tr><td><strong>Pedido explícito de humano</strong> — profissional solicita falar com atendente</td><td>Setor identificado pela intenção</td><td><span class="tag tag-gold">Média</span></td></tr>
+                <tr><td><strong>2 falhas de compreensão</strong> — IA não identifica a intenção após duas tentativas</td><td>Atendimento Geral</td><td><span class="tag tag-gold">Média</span></td></tr>
+                <tr><td><strong>Negociação fora dos limites</strong> — parcelamento ou acordo acima da alçada pré-definida pela gestão</td><td>Cobrança / Financeiro (humano)</td><td><span class="tag tag-red">Alta</span></td></tr>
+                <tr><td><strong>Assunto jurídico ou denúncia</strong> — processos éticos, fiscalização, denúncias</td><td>Jurídico</td><td><span class="tag tag-red">Alta</span></td></tr>
+                <tr><td><strong>Licitações e fornecedores</strong> — demandas de ADM/Licitação (o menu mais complexo do bot antigo: 17 opções)</td><td>ADM / Licitação</td><td><span class="tag tag-gold">Média</span></td></tr>
+                <tr><td><strong>Solicitações especiais</strong> — casos que exigem julgamento ou exceção à regra</td><td>Setor competente + Supervisor</td><td><span class="tag tag-gold">Média</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="secao">
+        <div class="secao-hd" id="hd-k4" onclick="tog('k4')">
+          <span class="sec-badge b-gray">Limites</span>
+          <h3>Onde a IA não atua — nunca</h3>
+          <span class="chev">▼</span>
+        </div>
+        <div class="secao-body" id="bd-k4">
+          <p>Fronteiras fixas de atuação, definidas com a instituição e bloqueadas por configuração — não dependem do comportamento do modelo.</p>
+          <ul class="lst">
+            <li><span class="l-dot"></span><span><strong>Decisões de deferimento/indeferimento</strong> de registro, baixa ou restabelecimento — sempre humanas</span></li>
+            <li><span class="l-dot"></span><span><strong>Orientação jurídica formal</strong> ou parecer sobre processos éticos e de fiscalização</span></li>
+            <li><span class="l-dot"></span><span><strong>Negociação de débitos fora dos limites</strong> de desconto e parcelamento aprovados pela gestão</span></li>
+            <li><span class="l-dot"></span><span><strong>Exibição de dados sensíveis sem dupla validação</strong> de titularidade</span></li>
+            <li><span class="l-dot"></span><span><strong>Cancelamento de registro ou alteração cadastral crítica</strong> — a IA apenas protocola e encaminha</span></li>
+            <li><span class="l-dot"></span><span><strong>Comunicação de decisões oficiais</strong> do plenário ou de comissões</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="secao">
+        <div class="secao-hd" id="hd-k5" onclick="tog('k5')">
+          <span class="sec-badge b-gold">Busca Financeira</span>
+          <h3>Como a IA busca boletos e dados financeiros</h3>
+          <span class="chev">▼</span>
+        </div>
+        <div class="secao-body" id="bd-k5">
+          <p>Fluxo de consulta financeira executado pela IA em segundos, com validação de titularidade obrigatória e log completo para auditoria.</p>
+          <div class="flow-wrap">
+            <div class="flow-container">
+              <div class="flow-step">Solicitação<small>"Preciso do boleto"</small></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step gold">AssistPro<small>Intenção: financeiro</small></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">Validação<small>CPF × WhatsApp</small></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">API Financeiro<small>Débitos em aberto</small></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step gold">2ª Via Gerada<small>Enviada no chat</small></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">Registro<small>Card + log LGPD</small></div>
             </div>
           </div>
-          <div class="plat-feature">
-            <div class="plat-icon">
-              <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
-                <circle cx="8.5" cy="8.5" r="6.5" stroke="#D6A63C" stroke-width="1.3"/>
-                <path d="M8.5 5.5v3l2.5 2.5" stroke="#D6A63C" stroke-width="1.3" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <h4>Automação Pública Inteligente</h4>
-              <p>Processos automáticos que eliminam gargalos e liberam a equipe para o estratégico.</p>
-            </div>
-          </div>
-          <div class="plat-feature">
-            <div class="plat-icon">
-              <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
-                <rect x="2" y="4" width="5" height="4" rx="1" stroke="#D6A63C" stroke-width="1.3"/>
-                <rect x="10" y="4" width="5" height="4" rx="1" stroke="#D6A63C" stroke-width="1.3"/>
-                <rect x="6" y="10" width="5" height="4" rx="1" stroke="#D6A63C" stroke-width="1.3"/>
-                <path d="M4.5 8v1.5M12.5 8v1.5M8.5 8.5v1.5" stroke="#D6A63C" stroke-width="1.3" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <h4>Integração Multi-canal</h4>
-              <p>WhatsApp, e-mail, portais e sistemas conectados em uma central operacional única.</p>
-            </div>
-          </div>
+          <div class="success-box"><strong>Regra de ouro:</strong> a IA nunca informa valores ou envia boletos sem validação de titularidade. Toda consulta gera log auditável com data, hora, dado acessado e resultado.</div>
         </div>
       </div>
-      <div class="plat-cards">
-        <div class="plat-card reveal">
-          <div class="num">01</div>
-          <h3>CRM Institucional Integrado</h3>
-          <p>Gestão do relacionamento com cidadãos, associados e parceiros em uma plataforma centralizada com visibilidade total do pipeline institucional.</p>
+
+      <div class="secao">
+        <div class="secao-hd" id="hd-k6" onclick="tog('k6')">
+          <span class="sec-badge">De-Para</span>
+          <h3>Substituição do bot convencional pela IA</h3>
+          <span class="chev">▼</span>
         </div>
-        <div class="plat-card reveal">
-          <div class="num">02</div>
-          <h3>Central de Atendimento Digital</h3>
-          <p>Atendimento omnichannel com IA assistiva, automação de respostas e escalabilidade para o volume institucional público.</p>
-        </div>
-        <div class="plat-card reveal">
-          <div class="num">03</div>
-          <h3>Painel de Gestão Operacional</h3>
-          <p>Visibilidade em tempo real de processos, equipes, indicadores e gargalos em um ambiente unificado.</p>
-        </div>
-        <div class="plat-card reveal">
-          <div class="num">04</div>
-          <h3>Portal Institucional Integrado</h3>
-          <p>Presença digital conectada ao CRM, com formulários inteligentes, automações e jornadas do cidadão.</p>
+        <div class="secao-body" id="bd-k6">
+          <p>Baseado no mapeamento completo do bot CRCDF (15 condições, 40+ API Requests, menus de até 17 opções): tudo que o bot fazia por menus numerados, a IA passa a fazer por intenção — e envia ao pipeline correto do Bitrix24.</p>
+          <div class="tb-wrap">
+            <table class="tb">
+              <thead><tr><th style="width:26%">Bot Antigo (menu numerado)</th><th>IA AssistPro (intenção NLP)</th><th style="width:170px">Pipeline de Destino</th></tr></thead>
+              <tbody>
+                <tr><td>Opção 1 — Atendimento Geral</td><td>Detecta dúvidas gerais e resolve via FAQ; escala apenas o que exigir humano</td><td><span class="tag tag-gray">Atendimento Geral</span></td></tr>
+                <tr><td>Opção 2 — Cobrança (menu de 7 opções · 250 exec.)</td><td>Resolve boletos e situação financeira direto; escala só negociações fora de alçada</td><td><span class="tag tag-gold">Cobrança / Financeiro</span></td></tr>
+                <tr><td>Opção 3 — Registro</td><td>Informa status e documentação; protocola solicitações de alteração</td><td><span class="tag tag-blue">Registro</span></td></tr>
+                <tr><td>Opção 4 — Desenv. Profissional (menu de 9 opções)</td><td>Qualifica a demanda (cursos, pontuação, eventos) e cria card já classificado</td><td><span class="tag tag-green">Desenv. Profissional</span></td></tr>
+                <tr><td>Opção 5 — Assessoria</td><td>Coleta contexto e roteia com prioridade definida por urgência</td><td><span class="tag tag-gray">Assessoria</span></td></tr>
+                <tr><td>Opção 6 — Jurídico</td><td>Não responde mérito — protocola e escala imediatamente com dossiê</td><td><span class="tag tag-red">Jurídico</span></td></tr>
+                <tr><td>Opção 7 — ADM/Licitação (menu de 17 opções)</td><td>Elimina o menu mais complexo do bot: identifica o assunto na conversa e roteia</td><td><span class="tag tag-gold">ADM / Licitação</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tb-wrap">
+            <table class="tb">
+              <thead><tr><th>Métrica</th><th style="width:160px">Bot Convencional</th><th style="width:160px">IA AssistPro</th></tr></thead>
+              <tbody>
+                <tr><td>Taxa de resolução sem humano</td><td>40–50%</td><td><strong style="color:var(--gold-dark)">75–85%</strong></td></tr>
+                <tr><td>Tempo médio de atendimento</td><td>5–8 min (menus)</td><td><strong style="color:var(--gold-dark)">2–3 min</strong></td></tr>
+                <tr><td>Compreensão</td><td>Somente números digitados</td><td><strong style="color:var(--gold-dark)">Linguagem natural + contexto</strong></td></tr>
+                <tr><td>Manutenção</td><td>Reprogramação manual por opção</td><td><strong style="color:var(--gold-dark)">−80% de esforço</strong></td></tr>
+                <tr><td>Escalada</td><td>Sempre para humano</td><td><strong style="color:var(--gold-dark)">Somente pelos gatilhos definidos</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ════ SIMULADOR INTERATIVO (NOVIDADE) ════════════════ -->
-    <div class="sandbox-container reveal">
-      <div class="sandbox-header">
-        <h3>Simulador de Processos GovTech</h3>
-        <p>Interaja com o fluxo abaixo e veja a inteligência institucional da Traevo em ação.</p>
+    <!-- ══════════ INTEGRAÇÕES ══════════ -->
+    <div class="tab-pane" id="tp-int">
+      <div class="sec-hd">
+        <div class="s-label">Arquitetura Técnica</div>
+        <h2>Integrações &amp; Plataformas do GRI</h2>
+        <p>Ecossistema técnico do núcleo — cada plataforma com papel definido e custo de licenças sob responsabilidade da instituição.</p>
       </div>
-      <div class="sandbox-flow">
-        <div class="sandbox-node" id="node-1">
-          <h4>1. Entrada</h4>
-          <p>Requerimento do Cidadão</p>
+      <div class="int-grid">
+        <div class="int-card">
+          <div class="ich"><span class="idot"></span>Bitrix24 CRM</div>
+          <div class="icb">
+            <div class="int-role">Hub Central · Pipelines</div>
+            <div class="int-row"><span class="dot">→</span>Kanban exclusivo da IA + kanbans por setor</div>
+            <div class="int-row"><span class="dot">→</span>Histórico completo por profissional</div>
+            <div class="int-row"><span class="dot">→</span>SLA, automações e relatórios em tempo real</div>
+            <div class="int-row"><span class="dot">→</span>Referência: 15 pipelines no case CRCDF</div>
+          </div>
         </div>
-        <div class="sandbox-connector"><div class="sandbox-connector-fill" id="conn-1"></div></div>
-        <div class="sandbox-node" id="node-2">
-          <h4>2. Triagem AssistPro</h4>
-          <p>IA analisa e valida</p>
+        <div class="int-card">
+          <div class="ich"><span class="idot"></span>IA AssistPro</div>
+          <div class="icb">
+            <div class="int-role">Inteligência Nativa</div>
+            <div class="int-row"><span class="dot">→</span>NLP: intenção, contexto e entidades</div>
+            <div class="int-row"><span class="dot">→</span>Análise de sentimento para escalada</div>
+            <div class="int-row"><span class="dot">→</span>Aprendizado contínuo com cada interação</div>
+            <div class="int-row"><span class="dot">→</span>Substitui totalmente o bot de menus</div>
+          </div>
         </div>
-        <div class="sandbox-connector"><div class="sandbox-connector-fill" id="conn-2"></div></div>
-        <div class="sandbox-node" id="node-3">
-          <h4>3. Assinatura</h4>
-          <p>Aprovação institucional</p>
+        <div class="int-card">
+          <div class="ich"><span class="idot"></span>WhatsApp Business API</div>
+          <div class="icb">
+            <div class="int-role">Canal Principal</div>
+            <div class="int-row"><span class="dot">→</span>Atendimento 24/7 com histórico sincronizado</div>
+            <div class="int-row"><span class="dot">→</span>Transferência transparente IA → atendente</div>
+            <div class="int-row"><span class="dot">→</span>Envio de boletos, certidões e protocolos</div>
+          </div>
         </div>
-        <div class="sandbox-connector"><div class="sandbox-connector-fill" id="conn-3"></div></div>
-        <div class="sandbox-node" id="node-4">
-          <h4>4. Desfecho</h4>
-          <p>Notificação automática</p>
+        <div class="int-card">
+          <div class="ich"><span class="idot"></span>Sistema Financeiro / ERP</div>
+          <div class="icb">
+            <div class="int-role">API REST · Boletos</div>
+            <div class="int-row"><span class="dot">→</span>Consulta de débitos e anuidades em aberto</div>
+            <div class="int-row"><span class="dot">→</span>Emissão de 2ª via em tempo real</div>
+            <div class="int-row"><span class="dot">→</span>Confirmação de pagamentos identificados</div>
+          </div>
+        </div>
+        <div class="int-card">
+          <div class="ich"><span class="idot"></span>Base de Conhecimento</div>
+          <div class="icb">
+            <div class="int-role">Gestão de Conhecimento</div>
+            <div class="int-row"><span class="dot">→</span>FAQ, regulamentações e documentos exigidos</div>
+            <div class="int-row"><span class="dot">→</span>Atualizada automaticamente com resoluções</div>
+            <div class="int-row"><span class="dot">→</span>Parâmetros e limites de atuação da IA</div>
+          </div>
+        </div>
+        <div class="int-card">
+          <div class="ich"><span class="idot"></span>Conformidade &amp; Auditoria</div>
+          <div class="icb">
+            <div class="int-role">LGPD · Lei 14.133/2021</div>
+            <div class="int-row"><span class="dot">→</span>Log de todas as interações e acessos a dados</div>
+            <div class="int-row"><span class="dot">→</span>Consentimento registrado e auditável</div>
+            <div class="int-row"><span class="dot">→</span>Criptografia em trânsito e em repouso</div>
+          </div>
         </div>
       </div>
-      <div class="sandbox-controls">
-        <button class="btn btn-dark" id="btn-run-simulation">Executar Fluxo Inteligente</button>
-        <button class="btn btn-ghost" id="btn-reset-simulation">Resetar</button>
-      </div>
-      <div class="sandbox-terminal" id="sandbox-log">
-        > Terminal pronto para simulação institucional... Clique em Executar para iniciar.
-      </div>
+      <div class="alert-box"><strong>Responsabilidade de custos:</strong> licenças Bitrix24, WhatsApp Business API, infraestrutura de integração e plataformas de terceiros são de responsabilidade exclusiva da instituição. A Traevo realiza implementação, configuração e treinamento.</div>
     </div>
 
   </div>
-</section>
-
-<!-- ════ METODOLOGIAS ════════════════════════════════════ -->
-<section id="metodologias">
-  <div class="s-wrap">
-    <div class="s-label">Metodologias</div>
-    <h2>Três abordagens. Uma arquitetura de transformação.</h2>
-    <div class="met-grid">
-      <div class="met-card reveal">
-        <div class="met-tag">Método 01</div>
-        <h3>Método Vértice</h3>
-        <p>Automação inteligente de processos institucionais. Mapeia, estrutura e automatiza fluxos operacionais de forma progressiva e sustentável.</p>
-        <ul class="met-items">
-          <li>Mapeamento de processos críticos</li>
-          <li>Automação orientada a resultados</li>
-          <li>Indicadores de performance institucional</li>
-          <li>Governança de fluxos operacionais</li>
-        </ul>
-      </div>
-      <div class="met-card reveal">
-        <div class="met-tag">Método 02</div>
-        <h3>Conexões Inteligentes</h3>
-        <p>Unificação da comunicação institucional. Conecta canais, equipes e sistemas em uma arquitetura de comunicação coerente e fluida.</p>
-        <ul class="met-items">
-          <li>Integração omnichannel estruturada</li>
-          <li>Comunicação unificada por canal</li>
-          <li>Automação de jornadas de contato</li>
-          <li>Central de relacionamento integrada</li>
-        </ul>
-      </div>
-      <div class="met-card reveal">
-        <div class="met-tag">Método 03</div>
-        <h3>GRI Integrado</h3>
-        <p>Gestão de Relacionamento Institucional Integrado. Estrutura o relacionamento com stakeholders em um sistema vivo e rastreável.</p>
-        <ul class="met-items">
-          <li>Pipeline institucional estruturado</li>
-          <li>Rastreabilidade de interações</li>
-          <li>Inteligência de relacionamento</li>
-          <li>Relatórios gerenciais integrados</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════ ECOSSISTEMA ═════════════════════════════════════ -->
-<section id="ecossistema">
-  <div class="s-wrap">
-    <div class="eco-header">
-      <div>
-        <div class="s-label">Ecossistema Tecnológico</div>
-        <h2>Infraestrutura operacional, não produto de prateleira.</h2>
-      </div>
-      <p>O ecossistema Traevo é construído como infraestrutura institucional: modular, integrado e escalável conforme a maturidade operacional de cada organização.</p>
-    </div>
-    <div class="eco-grid">
-      <div class="eco-item span2 reveal">
-        <div class="eco-badge badge-core">Core Platform</div>
-        <h3>AssistPro — IA Institucional</h3>
-        <p>Motor de inteligência artificial treinado para o contexto institucional público. Atendimento, triagem, automação e suporte operacional com linguagem adequada ao ambiente governamental e associativo.</p>
-      </div>
-      <div class="eco-item reveal">
-        <div class="eco-badge badge-ia">Automação</div>
-        <h3>Automação de Processos</h3>
-        <p>Workflows inteligentes que eliminam tarefas repetitivas e criam fluxos contínuos.</p>
-      </div>
-      <div class="eco-item reveal">
-        <div class="eco-badge badge-int">Gestão</div>
-        <h3>Central Operacional</h3>
-        <p>Painel unificado para gerenciamento de canais, times e indicadores em tempo real.</p>
-      </div>
-      <div class="eco-item reveal">
-        <div class="eco-badge badge-int">Portal</div>
-        <h3>Portais Institucionais</h3>
-        <p>Presença digital integrada ao CRM com automações de captação e relacionamento.</p>
-      </div>
-      <div class="eco-item reveal">
-        <div class="eco-badge badge-ia">IA</div>
-        <h3>Atendimento Digital</h3>
-        <p>Chatbots, voicebots e agentes IA para escalar o atendimento institucional.</p>
-      </div>
-      <div class="eco-item reveal">
-        <div class="eco-badge badge-int">Dados</div>
-        <h3>Relatórios e Inteligência</h3>
-        <p>Dashboards e relatórios integrados para decisões baseadas em dados reais.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════ SEGMENTOS ═══════════════════════════════════════ -->
-<section id="segmentos">
-  <div class="s-wrap">
-    <div class="s-label">Segmentos Atendidos</div>
-    <h2>Construído para o ecossistema institucional público.</h2>
-    <div class="seg-grid">
-      <div class="seg-card reveal">
-        <div class="seg-num">01</div>
-        <h3>Conselhos Profissionais</h3>
-        <p>Gestão de registros, fiscalização, atendimento ao inscrito e comunicação institucional integrada.</p>
-      </div>
-      <div class="seg-card reveal">
-        <div class="seg-num">02</div>
-        <h3>Prefeituras</h3>
-        <p>Modernização da gestão municipal, atendimento ao cidadão e integração de secretarias.</p>
-      </div>
-      <div class="seg-card reveal">
-        <div class="seg-num">03</div>
-        <h3>Sistema S</h3>
-        <p>Automação operacional, gestão de matrículas, relacionamento com empresas e relatórios integrados.</p>
-      </div>
-      <div class="seg-card reveal">
-        <div class="seg-num">04</div>
-        <h3>Secretarias</h3>
-        <p>Processos internos organizados, comunicação intersetorial e indicadores de desempenho.</p>
-      </div>
-      <div class="seg-card reveal">
-        <div class="seg-num">05</div>
-        <h3>Institutos e Fundações</h3>
-        <p>Gestão de programas, relacionamento com beneficiários e prestação de contas automatizada.</p>
-      </div>
-      <div class="seg-card reveal">
-        <div class="seg-num">06</div>
-        <h3>Empresas Públicas</h3>
-        <p>Transformação digital orientada à eficiência operacional e modernização da cultura organizacional.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════ MODERNIZAÇÃO ════════════════════════════════════ -->
-<section id="modernizacao">
-  <div class="inner">
-    <div class="tag">Manifesto</div>
-    <h2 class="big">
-      O futuro institucional não é uma questão de <em>tecnologia</em>.<br>
-      É uma questão de <em>arquitetura</em>.
-    </h2>
-    <p class="sub">Instituições modernas não precisam apenas de software. Precisam de estrutura, clareza operacional e uma base tecnológica que acompanhe o ritmo da transformação pública.</p>
-    <div class="principles">
-      <div class="principle">
-        <div class="principle-num">01</div>
-        <h4>Clareza antes de velocidade</h4>
-        <p>Processos bem estruturados entregam mais do que sistemas rápidos sem direção.</p>
-      </div>
-      <div class="principle">
-        <div class="principle-num">02</div>
-        <h4>Integração como estratégia</h4>
-        <p>A fragmentação de sistemas é o maior inimigo da produtividade institucional.</p>
-      </div>
-      <div class="principle">
-        <div class="principle-num">03</div>
-        <h4>Tecnologia a serviço da cultura</h4>
-        <p>A transformação real começa quando pessoas e processos evoluem juntos.</p>
-      </div>
-    </div>
-    <a href="#contato" class="btn btn-dark" style="margin: 0 auto;">
-      Iniciar evolução institucional
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-        <path d="M2.5 7.5h10M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
-  </div>
-</section>
-
-<!-- ════ FAQ SECTION (NOVIDADE) ═════════════════════════ -->
-<section id="faq">
-  <div class="s-wrap">
-    <div class="s-label" style="display: flex; justify-content: center; margin-bottom: 12px;">Dúvidas Comuns</div>
-    <h2 style="text-align: center; font-size: clamp(24px, 2.8vw, 36px); font-weight: 700; margin-bottom: 24px;">Respostas para suas dúvidas frequentes</h2>
-    <div class="faq-container">
-      <div class="faq-item">
-        <button class="faq-trigger">
-          <span>O ecossistema atende a LGPD e normas públicas de segurança?</span>
-          <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="faq-content">
-          <div class="faq-content-inner">
-            Sim. Toda a nossa infraestrutura foi projetada com base nos princípios da LGPD e nos padrões de segurança exigidos pela administração pública brasileira, garantindo criptografia ponta a ponta e auditabilidade de todos os processos.
-          </div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-trigger">
-          <span>Como funciona a integração com sistemas legados da autarquia?</span>
-          <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="faq-content">
-          <div class="faq-content-inner">
-            Nossa plataforma é modular e possui barramento de APIs abertas. Conseguimos nos conectar a banco de dados antigos e sistemas legados de cadastro ou finanças (como ERPs e CRMs públicos tradicionais) para centralizar a operação sem a perda de dados históricos.
-          </div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-trigger">
-          <span>O que é a inteligência AssistPro?</span>
-          <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="faq-content">
-          <div class="faq-content-inner">
-            O AssistPro é o nosso agente de inteligência artificial otimizado para o setor público. Ele atua na classificação automática de chamados, na triagem de documentos digitais e no autoatendimento via portais de forma inteligente e com linguagem institucional adequada.
-          </div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-trigger">
-          <span>Quanto tempo leva a implantação de uma solução Traevo?</span>
-          <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="faq-content">
-          <div class="faq-content-inner">
-            A implantação depende do porte institucional e do escopo selecionado, mas através da nossa metodologia ágil e modelo modular de infraestrutura, os fluxos de trabalho básicos e canais de atendimento integrados costumam estar ativos em poucas semanas.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════ CONTATO ══════════════════════════════════════════ -->
-<section id="contato">
-  <div class="s-wrap">
-    <div class="s-label">Contato Estratégico</div>
-    <div class="contato-grid">
-      <div class="contato-left reveal">
-        <h2>Construir sua arquitetura operacional começa aqui.</h2>
-        <p>Converse com nossos especialistas em transformação institucional e descubra como a Traevo GovTech pode estruturar a modernização da sua organização.</p>
-        <div class="contato-infos">
-          <div class="cinfo">
-            <div class="cinfo-icon">
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                <rect x="1.5" y="3" width="12" height="9" rx="1" stroke="#D6A63C" stroke-width="1.3"/>
-                <path d="M1.5 4.5l6 4.5 6-4.5" stroke="#D6A63C" stroke-width="1.3" stroke-linecap="round"/>
-              </svg>
-            </div>
-            contato@traevo.com.br
-          </div>
-          <div class="cinfo">
-            <div class="cinfo-icon">
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                <path d="M13 10.2c0 .24-.053.475-.158.704a2.7 2.7 0 01-.44.644c-.319.307-.668.458-1.03.47-.27 0-.56-.067-.868-.205l-.94-.47a8.88 8.88 0 01-3.14-3.14l-.47-.94A2.37 2.37 0 015.75 6.4c.012-.356.163-.706.47-1.03.186-.198.416-.338.644-.44C7.093 4.825 7.328 4.77 7.568 4.77c.09 0 .18.013.265.037.09.024.175.072.253.144l1.75 2.466c.079.108.133.229.163.36.03.127.04.254.037.38a.806.806 0 01-.199.475l-.342.342a.204.204 0 00-.054.144c0 .025.006.049.018.072.097.18.41.632.952 1.178.542.536.993.855 1.17.952a.277.277 0 00.224-.036l.342-.342a.81.81 0 01.475-.198c.126-.007.253.006.379.036.13.03.252.084.36.163l2.466 1.75c.072.079.12.163.144.253.024.09.037.18.037.27z" stroke="#D6A63C" stroke-width="1.3"/>
-              </svg>
-            </div>
-            (11) 9 9999-0000
-          </div>
-        </div>
-      </div>
-      <form class="contato-form reveal" id="strategic-contact-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nome completo</label>
-            <input type="text" id="form-name" placeholder="Seu nome" required>
-          </div>
-          <div class="form-group">
-            <label>Cargo</label>
-            <input type="text" id="form-role" placeholder="Diretor, Gestor..." required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>E-mail institucional</label>
-            <input type="email" id="form-email" placeholder="email@instituicao.gov.br" required>
-          </div>
-          <div class="form-group">
-            <label>Telefone</label>
-            <input type="tel" id="form-phone" placeholder="(11) 90000-0000" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Segmento da organização</label>
-          <select id="form-segment" required>
-            <option value="">Selecione o segmento</option>
-            <option>Conselho Profissional</option>
-            <option>Prefeitura</option>
-            <option>Sistema S</option>
-            <option>Secretaria</option>
-            <option>Instituto ou Fundação</option>
-            <option>Empresa Pública</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Como podemos ajudar?</label>
-          <textarea id="form-msg" placeholder="Descreva o desafio ou objetivo da sua organização..." required></textarea>
-        </div>
-        <div class="form-submit">
-          <button type="submit" class="btn btn-dark btn-full" style="border: none;">
-            Iniciar conversa estratégica
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-              <path d="M2.5 7.5h10M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</section>
-
-<!-- ════ NOTIFICATION MODAL (NOVIDADE) ══════════════════ -->
-<div class="modal-overlay" id="success-modal">
-  <div class="modal-card">
-    <div class="modal-icon">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-    </div>
-    <h3>Solicitação Enviada!</h3>
-    <p>Obrigado pelo contato. Um especialista em GovTech de nosso time analisará sua demanda e entrará em contato em até 24 horas.</p>
-    <button class="btn btn-dark" id="modal-close-btn" style="width: 100%;">Fechar</button>
-  </div>
-</div>
-
-<!-- ════ FOOTER ═══════════════════════════════════════════ -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <div class="footer-mark">
-        <span></span><span></span><span></span>
-      </div>
-      Traevo GovTech
-    </div>
-    <ul class="footer-links">
-      <li><a href="#plataforma">Plataforma</a></li>
-      <li><a href="#metodologias">Metodologias</a></li>
-      <li><a href="#ecossistema">Ecossistema</a></li>
-      <li><a href="#segmentos">Segmentos</a></li>
-      <li><a href="#contato">Contato</a></li>
-    </ul>
-    <div class="footer-copy">© 2025 Traevo GovTech. Todos os direitos reservados.</div>
-  </div>
-</footer>
+</main>
 
 <script>
-  // ── Scroll reveal ──────────────────────────────────────
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  document.querySelectorAll('.reveal').forEach((el, i) => {
-    el.style.transitionDelay = (i % 4) * 0.08 + 's';
-    io.observe(el);
+/* ══════════ NAVEGAÇÃO ══════════ */
+const PANES=['visao','sim','kanban','know','int'];
+function show(key){
+  PANES.forEach(k=>{
+    const p=document.getElementById('tp-'+k), t=document.getElementById('tab-'+k), s=document.getElementById('sb-'+k);
+    if(p)p.classList.toggle('active',k===key);
+    if(t)t.classList.toggle('active',k===key);
+    if(s)s.classList.toggle('active',k===key);
   });
+  document.getElementById('app-sidebar').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function tog(id){
+  const hd=document.getElementById('hd-'+id), bd=document.getElementById('bd-'+id);
+  if(hd&&bd){hd.classList.toggle('open');bd.classList.toggle('open');}
+}
+function toggleSidebar(){document.getElementById('app-sidebar').classList.toggle('open');}
 
-  // ── Nav opacity on scroll ──────────────────────────────
-  const nav = document.getElementById('site-nav');
-  window.addEventListener('scroll', () => {
-    nav.style.background = window.scrollY > 30
-      ? 'rgba(255,255,255,0.98)'
-      : 'rgba(255,255,255,0.93)';
-    nav.style.borderColor = window.scrollY > 30
-      ? 'rgba(0,0,0,0.1)'
-      : 'rgba(0,0,0,0.08)';
-  }, { passive: true });
-
-  // ── Active nav link ────────────────────────────────────
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-links a');
-  const onScroll = () => {
-    const y = window.scrollY + 100;
-    sections.forEach(s => {
-      if (y >= s.offsetTop && y < s.offsetTop + s.offsetHeight) {
-        navLinks.forEach(a => {
-          if (a.getAttribute('href') === '#' + s.id) {
-            a.style.color = '#111';
-            a.style.fontWeight = '600';
-          } else {
-            a.style.color = '';
-            a.style.fontWeight = '';
-          }
-        });
-      }
-    });
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-
-  // ── Mobile Menu toggle (NEW) ───────────────────────────
-  const mobileBtn = document.getElementById('mobile-menu-btn');
-  const mobileOverlay = document.getElementById('mobile-menu-overlay');
-  const mobileLinks = document.querySelectorAll('.mobile-link');
-
-  const toggleMobileMenu = () => {
-    mobileBtn.classList.toggle('active');
-    mobileOverlay.classList.toggle('active');
-    document.body.style.overflow = mobileOverlay.classList.contains('active') ? 'hidden' : '';
-  };
-
-  mobileBtn.addEventListener('click', toggleMobileMenu);
-
-  mobileLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      if (mobileOverlay.classList.contains('active')) {
-        toggleMobileMenu();
-      }
-    });
-  });
-
-  // ── Parallax effect on Hero SVG (NEW) ──────────────────
-  const heroLeft = document.querySelector('.hero-left');
-  const heroSVG = document.getElementById('hero-svg');
-  if (heroSVG) {
-    document.addEventListener('mousemove', (e) => {
-      const x = (window.innerWidth / 2 - e.clientX) / 50;
-      const y = (window.innerHeight / 2 - e.clientY) / 50;
-      heroSVG.style.transform = `translate(${x}px, ${y}px)`;
-    });
+/* ══════════ DADOS DA SIMULAÇÃO ══════════ */
+const STAGES=['Novo','Triagem IA','Atendimento IA','Resolvido pela IA','Escalado → Setor'];
+const SC=[
+  {
+    tag:'FINANCEIRO · SEM ESCALADA',tagC:'green',color:'green',
+    title:'2ª Via de Boleto de Anuidade',
+    desc:'A IA valida a titularidade, consulta o sistema financeiro via API e envia o boleto atualizado — resolvido 24/7, sem humano.',
+    stage:3,cardT:'Mariana Duarte',cardS:'Anuidade 2026 · R$ 680,00',cardB:'RESOLVIDO IA',
+    chat:[
+      {w:'usr',t:'Oi, preciso da 2ª via do boleto da anuidade 2026.'},
+      {w:'bot',l:'IA AssistPro',t:'Olá, Mariana! 👋 Localizei seu cadastro pelo WhatsApp. Para sua segurança, confirma o CPF final ***-42?'},
+      {w:'usr',t:'Sim, sou eu.'},
+      {w:'bot',l:'IA AssistPro',t:'Titularidade confirmada ✅ Consultei o financeiro: anuidade 2026 em aberto, R$ 680,00. Aqui está a 2ª via atualizada, venc. 20/07: 📄 [boleto.pdf]'},
+      {w:'usr',t:'Perfeito, obrigada!'},
+      {w:'bot',l:'IA AssistPro',t:'Registrado no seu histórico. Se o pagamento não for identificado em 5 dias úteis, eu retorno por aqui. 😉'}
+    ],
+    wh:[
+      {c:'cmd',v:'> AssistPro · intent("financeiro.boleto_2via")'},
+      {c:'brace',v:'{'},
+      {c:'kv',k:'  profissional',v:'"Mariana Duarte"'},
+      {c:'kv',k:'  validacao',v:'"cpf_x_whatsapp: OK"'},
+      {c:'kv',k:'  consulta',v:'"API Financeiro/ERP"'},
+      {c:'kv',k:'  anuidade',v:'"2026 · R$ 680,00"'},
+      {c:'kv',k:'  boleto_gerado',v:'true'},
+      {c:'kv',k:'  escalada',v:'false'},
+      {c:'brace',v:'}'},
+      {c:'blank',v:''},
+      {c:'ok',v:'< 200 OK — resolvido pela IA'},
+      {c:'note',v:'< kanban IA: card → "Resolvido pela IA"'},
+      {c:'note',v:'< log LGPD: consulta registrada'}
+    ]
+  },
+  {
+    tag:'CONSULTA CRM · SEM ESCALADA',tagC:'blue',color:'blue',
+    title:'Status de Registro Profissional',
+    desc:'Profissional pergunta em linguagem natural. A IA consulta o CRM, informa a etapa do processo e emite protocolo.',
+    stage:3,cardT:'Rafael Nogueira',cardS:'Registro em análise · Protocolo #RG-3318',cardB:'RESOLVIDO IA',
+    chat:[
+      {w:'usr',t:'Queria saber como está meu pedido de registro, entreguei os documentos mês passado.'},
+      {w:'bot',l:'IA AssistPro',t:'Olá, Rafael! Encontrei seu processo: registro em análise pela comissão, etapa 3 de 4. Documentação completa ✅'},
+      {w:'usr',t:'Tem previsão?'},
+      {w:'bot',l:'IA AssistPro',t:'A etapa atual leva em média 10 dias úteis. Gerei o protocolo #RG-3318 — te aviso por aqui a cada mudança de status. 📋'},
+      {w:'usr',t:'Ótimo, valeu!'}
+    ],
+    wh:[
+      {c:'cmd',v:'> AssistPro · intent("registro.status")'},
+      {c:'brace',v:'{'},
+      {c:'kv',k:'  profissional',v:'"Rafael Nogueira"'},
+      {c:'kv',k:'  consulta',v:'"Bitrix24 CRM · card registro"'},
+      {c:'kv',k:'  etapa',v:'"3/4 · em análise"'},
+      {c:'kv',k:'  protocolo',v:'"#RG-3318"'},
+      {c:'kv',k:'  notificacao_auto',v:'true'},
+      {c:'brace',v:'}'},
+      {c:'blank',v:''},
+      {c:'ok',v:'< 200 OK — consulta respondida'},
+      {c:'note',v:'< kanban IA: card → "Resolvido pela IA"'},
+      {c:'note',v:'< automação: alerta em mudança de etapa'}
+    ]
+  },
+  {
+    tag:'QUALIFICAÇÃO · ROTEAMENTO',tagC:'gold',color:'gold',
+    title:'Qualificação → Desenvolvimento Profissional',
+    desc:'Sem menu de 9 opções: a IA entende a intenção, qualifica a demanda e cria o card já classificado no pipeline do setor.',
+    stage:4,cardT:'Beatriz Campos',cardS:'Educação continuada · Pontuação',cardB:'→ DESENV. PROFISSIONAL',
+    chat:[
+      {w:'usr',t:'Consigo pontuar no programa de educação continuada com curso online de outra instituição?'},
+      {w:'bot',l:'IA AssistPro',t:'Olá, Beatriz! Cursos online podem pontuar se a instituição for credenciada. Para analisar seu caso, me confirma o nome do curso e a carga horária?'},
+      {w:'usr',t:'Curso de IFRS avançado, 40h, pela instituição XYZ.'},
+      {w:'bot',l:'IA AssistPro',t:'Anotado! Esse caso passa por análise do setor de Desenvolvimento Profissional. Criei sua solicitação já qualificada — protocolo #DP-2214. Retorno em até 3 dias úteis. ✅'}
+    ],
+    wh:[
+      {c:'cmd',v:'> AssistPro · intent("desenv_prof.pontuacao")'},
+      {c:'brace',v:'{'},
+      {c:'kv',k:'  profissional',v:'"Beatriz Campos"'},
+      {c:'kv',k:'  demanda',v:'"educação continuada"'},
+      {c:'kv',k:'  dados_coletados',v:'"curso, 40h, instituição XYZ"'},
+      {c:'kv',k:'  qualificacao',v:'"completa"'},
+      {c:'kv',k:'  destino',v:'"Pipeline Desenv. Profissional"'},
+      {c:'kv',k:'  protocolo',v:'"#DP-2214"'},
+      {c:'brace',v:'}'},
+      {c:'blank',v:''},
+      {c:'ok',v:'< 200 OK — card criado no setor'},
+      {c:'note',v:'< kanban IA: card → "Escalado → Setor"'},
+      {c:'note',v:'< dossiê anexado: conversa + dados'}
+    ]
+  },
+  {
+    tag:'ESCALADA · SENTIMENTO',tagC:'red',color:'red',
+    title:'Reclamação — Escalada ao Supervisor',
+    desc:'Análise de sentimento detecta insatisfação. A IA não insiste: prioriza, monta o dossiê e escala para humano imediatamente.',
+    stage:4,cardT:'Sérgio Tavares',cardS:'Reclamação · Sentimento negativo',cardB:'→ SUPERVISOR · ALTA',
+    chat:[
+      {w:'usr',t:'É a TERCEIRA vez que peço a correção do meu cadastro e nada! Um absurdo isso.'},
+      {w:'bot',l:'IA AssistPro',t:'Sérgio, você tem razão em estar insatisfeito — encontrei suas duas solicitações anteriores. Vou te transferir agora para um supervisor com todo o histórico. 🙏'},
+      {w:'bot',l:'IA AssistPro',t:'Transferido com prioridade ALTA. O supervisor já recebeu as 3 solicitações, datas e o que foi respondido. Você não vai precisar repetir nada.'},
+      {w:'usr',t:'Espero que resolvam dessa vez.'}
+    ],
+    wh:[
+      {c:'cmd',v:'> AssistPro · sentiment("negativo · 0.91")'},
+      {c:'brace',v:'{'},
+      {c:'kv',k:'  profissional',v:'"Sérgio Tavares"'},
+      {c:'kv',k:'  gatilho',v:'"sentimento_negativo"'},
+      {c:'kv',k:'  historico',v:'"2 solicitações anteriores"'},
+      {c:'kv',k:'  destino',v:'"Supervisor de Atendimento"'},
+      {c:'kv',k:'  prioridade',v:'"ALTA"'},
+      {c:'kv',k:'  dossie',v:'"transcrição + protocolos"'},
+      {c:'brace',v:'}'},
+      {c:'blank',v:''},
+      {c:'ok',v:'< 200 OK — escalada executada'},
+      {c:'note',v:'< kanban IA: card → "Escalado → Setor"'},
+      {c:'note',v:'< SLA: alerta ao supervisor em tempo real'}
+    ]
   }
+];
 
-  // ── Workflow simulator logic (NEW) ─────────────────────
-  const runBtn = document.getElementById('btn-run-simulation');
-  const resetBtn = document.getElementById('btn-reset-simulation');
-  const logTerminal = document.getElementById('sandbox-log');
-  let animationSteps = [];
-
-  const updateLog = (text) => {
-    logTerminal.innerHTML = `> ${text}`;
-  };
-
-  const runSimulation = () => {
-    runBtn.disabled = true;
-    runBtn.style.opacity = '0.5';
-    resetSimulation();
-
-    const delay = (ms) => new Promise(res => setTimeout(res, ms));
-
-    async function start() {
-      // Step 1
-      document.getElementById('node-1').classList.add('active');
-      updateLog("Iniciando: Cidadão envia o formulário via WhatsApp.");
-      await delay(1200);
-      document.getElementById('node-1').classList.remove('active');
-      document.getElementById('node-1').classList.add('completed');
-      document.getElementById('conn-1').style.width = '100%';
-
-      // Step 2
-      await delay(500);
-      document.getElementById('node-2').classList.add('active');
-      updateLog("Triagem: AssistPro IA analisa CPF/CNPJ e valida anexos.");
-      await delay(1500);
-      document.getElementById('node-2').classList.remove('active');
-      document.getElementById('node-2').classList.add('completed');
-      document.getElementById('conn-2').style.width = '100%';
-
-      // Step 3
-      await delay(500);
-      document.getElementById('node-3').classList.add('active');
-      updateLog("Assinatura: Fluxo de aprovação verificado pelo gestor.");
-      await delay(1200);
-      document.getElementById('node-3').classList.remove('active');
-      document.getElementById('node-3').classList.add('completed');
-      document.getElementById('conn-3').style.width = '100%';
-
-      // Step 4
-      await delay(500);
-      document.getElementById('node-4').classList.add('active');
-      updateLog("Desfecho: Alerta emitido para o cidadão. Concluído com sucesso!");
-      await delay(1000);
-      document.getElementById('node-4').classList.remove('active');
-      document.getElementById('node-4').classList.add('completed');
-      
-      runBtn.disabled = false;
-      runBtn.style.opacity = '1';
+/* ══════════ MOTOR DA SIMULAÇÃO ══════════ */
+const simState={sc:0,timers:[]};
+function selSc(idx,el){
+  simState.sc=idx;
+  document.querySelectorAll('#sc-gri .scenario-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function setStatus(panel,state){
+  const el=document.getElementById(panel+'-status');if(!el)return;
+  const labels={chat:{idle:'AGUARDANDO',running:'PROCESSANDO',done:'CONCLUÍDO'},wh:{idle:'AGUARDANDO',running:'INTEGRANDO',done:'SUCESSO'},pl:{idle:'AGUARDANDO',running:'ATUALIZANDO',done:'ATUALIZADO'}};
+  el.className='sp-status '+(state==='idle'?'ss-idle':state==='running'?'ss-running':'ss-done');
+  el.textContent=labels[panel][state];
+}
+function addTimer(fn,d){const t=setTimeout(fn,d);simState.timers.push(t);return t;}
+function resetSim(){
+  simState.timers.forEach(clearTimeout);simState.timers=[];
+  ['chat','wh','pl'].forEach(p=>setStatus(p,'idle'));
+  document.getElementById('chat-body').innerHTML='<div class="sim-idle-msg"><span class="idle-icon">💬</span>Selecione um cenário e inicie a simulação</div>';
+  document.getElementById('wh-body').innerHTML='<div class="sim-idle-msg"><span class="idle-icon">⚡</span>Aguardando início da simulação</div>';
+  document.getElementById('pl-body').innerHTML='<div class="sim-idle-msg"><span class="idle-icon">▦</span>O kanban será atualizado durante a simulação</div>';
+  const b=document.getElementById('btn-start-gri');b.disabled=false;
+}
+function startSim(){
+  resetSim();
+  const sc=SC[simState.sc], color=sc.color;
+  const b=document.getElementById('btn-start-gri');b.disabled=true;
+  /* kanban slots */
+  const plBody=document.getElementById('pl-body');plBody.innerHTML='';
+  STAGES.forEach((s,i)=>{
+    const row=document.createElement('div');row.className='pl-stage';
+    row.innerHTML='<div class="pl-label">'+s+'</div><div class="pl-slot" id="pl-slot-'+i+'"></div>';
+    plBody.appendChild(row);
+  });
+  setStatus('pl','running');
+  /* chat */
+  const chatBody=document.getElementById('chat-body');chatBody.innerHTML='';
+  setStatus('chat','running');
+  const typer=document.createElement('div');typer.className='typing-indicator';
+  let delay=300;const INTERVAL=1500,TYPING=750;
+  sc.chat.forEach((m,idx)=>{
+    if(m.w==='bot'){
+      addTimer(()=>{
+        chatBody.appendChild(typer);typer.classList.add('show');
+        typer.innerHTML='<div class="ti-dot"></div><div class="ti-dot"></div><div class="ti-dot"></div>';
+        chatBody.scrollTop=chatBody.scrollHeight;
+      },delay);
     }
-
-    start();
-  };
-
-  const resetSimulation = () => {
-    document.querySelectorAll('.sandbox-node').forEach(node => {
-      node.classList.remove('active', 'completed');
-    });
-    document.querySelectorAll('.sandbox-connector-fill').forEach(conn => {
-      conn.style.width = '0%';
-    });
-    updateLog("Terminal pronto para simulação institucional... Clique em Executar.");
-    runBtn.disabled = false;
-    runBtn.style.opacity = '1';
-  };
-
-  runBtn.addEventListener('click', runSimulation);
-  resetBtn.addEventListener('click', resetSimulation);
-
-  // ── FAQ Accordion (NEW) ────────────────────────────────
-  const faqItems = document.querySelectorAll('.faq-item');
-  faqItems.forEach(item => {
-    const trigger = item.querySelector('.faq-trigger');
-    const content = item.querySelector('.faq-content');
-
-    trigger.addEventListener('click', () => {
-      const isActive = item.classList.contains('active');
-      
-      // Close other active accordion items
-      faqItems.forEach(el => {
-        el.classList.remove('active');
-        el.querySelector('.faq-content').style.maxHeight = '0';
-      });
-
-      if (!isActive) {
-        item.classList.add('active');
-        content.style.maxHeight = content.scrollHeight + 'px';
-      }
-    });
+    addTimer(()=>{
+      if(typer.parentNode)typer.parentNode.removeChild(typer);
+      const row=document.createElement('div');
+      row.className='msg-row '+(m.w==='usr'?'user':'bot');
+      row.innerHTML=(m.w==='bot'&&m.l?'<div class="msg-label">'+m.l+'</div>':'')+'<div class="msg-bubble">'+m.t+'</div>';
+      chatBody.appendChild(row);chatBody.scrollTop=chatBody.scrollHeight;
+      if(idx===sc.chat.length-1)addTimer(()=>setStatus('chat','done'),400);
+    },delay+(m.w==='bot'?TYPING:0));
+    delay+=INTERVAL+(m.w==='bot'?TYPING:0);
   });
+  /* webhook/terminal */
+  const whStart=delay*0.36;
+  const whBody=document.getElementById('wh-body');whBody.innerHTML='';
+  setStatus('wh','running');
+  const WHI=130;
+  sc.wh.forEach((line,i)=>{
+    addTimer(()=>{
+      const span=document.createElement('span');span.className='wh-line';
+      if(line.c==='cmd')span.innerHTML='<span class="wh-cmd">'+line.v+'</span>';
+      else if(line.c==='brace')span.innerHTML='<span class="wh-brace">'+line.v+'</span>';
+      else if(line.c==='kv')span.innerHTML='<span class="wh-key">'+line.k+':</span> <span class="wh-val">'+line.v+',</span>';
+      else if(line.c==='ok')span.innerHTML='<span class="wh-ok">'+line.v+'</span>';
+      else if(line.c==='note')span.innerHTML='<span class="wh-note">'+line.v+'</span>';
+      else span.innerHTML='&nbsp;';
+      whBody.appendChild(span);whBody.scrollTop=whBody.scrollHeight;
+      if(i===sc.wh.length-1)addTimer(()=>setStatus('wh','done'),400);
+    },whStart+i*WHI);
+  });
+  /* card no kanban — passa pela triagem antes do destino final */
+  addTimer(()=>{
+    const s1=document.getElementById('pl-slot-1');
+    if(s1){s1.classList.add('active','active-gold');
+      s1.innerHTML='<div class="pl-card card-gold"><div class="pc-title">'+sc.cardT+'</div><div class="pc-sub">Triagem NLP em andamento…</div></div>';}
+  },whStart+2*WHI);
+  const plDelay=whStart+sc.wh.length*WHI+600;
+  addTimer(()=>{
+    const s1=document.getElementById('pl-slot-1');
+    if(s1){s1.classList.remove('active','active-gold');s1.innerHTML='';}
+    const slot=document.getElementById('pl-slot-'+sc.stage);if(!slot)return;
+    slot.classList.add('active','active-'+color);
+    slot.innerHTML='<div class="pl-card card-'+color+'"><div class="pc-title">'+sc.cardT+'</div><div class="pc-sub">'+sc.cardS+'</div><span class="pc-badge">'+sc.cardB+'</span></div>';
+    setStatus('pl','done');
+    b.disabled=false;
+  },plDelay);
+}
 
-  // ── Contact Form Submission with Custom Modal (NEW) ────
-  const contactForm = document.getElementById('strategic-contact-form');
-  const successModal = document.getElementById('success-modal');
-  const modalCloseBtn = document.getElementById('modal-close-btn');
-
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      // Form fields mapping (for future real submit hook)
-      const data = {
-        name: document.getElementById('form-name').value,
-        role: document.getElementById('form-role').value,
-        email: document.getElementById('form-email').value,
-        phone: document.getElementById('form-phone').value,
-        segment: document.getElementById('form-segment').value,
-        msg: document.getElementById('form-msg').value
-      };
-
-      console.log('Solicitação enviada de forma simulada:', data);
-
-      // Open Success Modal safely
-      successModal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+/* ══════════ KANBANS (aba) ══════════ */
+const KB={
+  ia:{label:'🤖 Kanban da IA',note:'Pipeline exclusivo da IA AssistPro — todo atendimento nasce aqui. O que ela resolve fica registrado; o que ela escala sai deste kanban e entra no pipeline do setor com dossiê.',cols:[
+    {t:'Triagem IA',c:'gold',cards:[
+      {t:'Ana Paiva',s:'Mensagem recebida · identificando intenção',b:[['NLP','gold']]},
+      {t:'Otávio Ramos',s:'"Como faço para transferir meu registro?"',b:[['Intenção: registro','blue']]}
+    ]},
+    {t:'Atendimento IA',c:'gold',cards:[
+      {t:'Carlos Mendes',s:'2ª via de boleto · consultando financeiro',b:[['API Financeiro','gold']]},
+      {t:'Júlia Rocha',s:'Status de registro · consultando CRM',b:[['CRM','blue']]}
+    ]},
+    {t:'Aguardando Dados',c:'dark',cards:[
+      {t:'Marcos Teles',s:'Validação de titularidade pendente (CPF)',b:[['Dupla validação','gray']]}
+    ]},
+    {t:'Resolvido pela IA',c:'green',cards:[
+      {t:'Mariana Duarte',s:'Boleto anuidade 2026 enviado ✅',b:[['24/7','green'],['Sem humano','green']]},
+      {t:'Fernanda Luz',s:'FAQ prazos de recadastramento',b:[['Base de Conhecimento','gray']]},
+      {t:'Rafael Nogueira',s:'Status informado · protocolo #RG-3318',b:[['Notificação auto','blue']]}
+    ]},
+    {t:'Escalado → Setor',c:'red',cards:[
+      {t:'Sérgio Tavares',s:'Reclamação · sentimento negativo',b:[['→ Supervisor','red'],['ALTA','red']]},
+      {t:'Beatriz Campos',s:'Educação continuada · qualificado',b:[['→ Desenv. Prof.','gold']]},
+      {t:'Luiz Castro',s:'Dúvida sobre edital de licitação',b:[['→ ADM/Licitação','gold']]}
+    ]}
+  ]},
+  fin:{label:'💰 Cobrança / Financeiro',note:'Recebe da IA apenas negociações fora de alçada e casos com julgamento humano. Boletos e consultas simples não chegam aqui — são resolvidos no kanban da IA.',cols:[
+    {t:'Novo (via IA)',c:'gold',cards:[
+      {t:'Paulo Henrique',s:'Parcelamento acima do limite da IA',b:[['Dossiê anexado','gold'],['ALTA','red']]}
+    ]},
+    {t:'Em Atendimento',c:'blue',cards:[
+      {t:'Regina Alves',s:'Acordo especial · 3 anuidades',b:[['Supervisão','gray']]}
+    ]},
+    {t:'Aguardando Profissional',c:'dark',cards:[
+      {t:'Tiago Nunes',s:'Proposta enviada · aguardando aceite',b:[['Follow-up auto','blue']]}
+    ]},
+    {t:'Resolvido',c:'green',cards:[
+      {t:'Camila Freitas',s:'Acordo firmado · 4x',b:[['Régua ativada','green']]}
+    ]},
+    {t:'Encerrado',c:'dark',cards:[
+      {t:'Eduardo Pires',s:'Quitado · satisfação 5/5',b:[['Auditoria','gray']]}
+    ]}
+  ]},
+  reg:{label:'📋 Registro',note:'Solicitações de registro, alteração cadastral e baixa. A IA protocola e informa status; a análise e o deferimento são sempre humanos.',cols:[
+    {t:'Novo (via IA)',c:'gold',cards:[
+      {t:'Larissa Prado',s:'Registro novo · docs completos',b:[['Qualificado pela IA','gold']]}
+    ]},
+    {t:'Em Análise',c:'blue',cards:[
+      {t:'Rafael Nogueira',s:'Etapa 3/4 · comissão',b:[['#RG-3318','blue']]},
+      {t:'Vera Lopes',s:'Alteração cadastral crítica',b:[['Validação manual','gray']]}
+    ]},
+    {t:'Pendência',c:'red',cards:[
+      {t:'Igor Matos',s:'Falta comprovante de conclusão',b:[['IA notificou','gold']]}
+    ]},
+    {t:'Deferido',c:'green',cards:[
+      {t:'Helena Cruz',s:'Registro ativo · carteira emitida',b:[['Concluído','green']]}
+    ]},
+    {t:'Encerrado',c:'dark',cards:[]}
+  ]},
+  dp:{label:'🎓 Desenv. Profissional',note:'Educação continuada, cursos e eventos. A IA elimina o antigo menu de 9 opções: qualifica a demanda na conversa e entrega o card pronto para análise.',cols:[
+    {t:'Novo (via IA)',c:'gold',cards:[
+      {t:'Beatriz Campos',s:'Pontuação curso 40h · inst. XYZ',b:[['#DP-2214','gold'],['Qualificado','gold']]}
+    ]},
+    {t:'Em Análise',c:'blue',cards:[
+      {t:'Diego Faria',s:'Credenciamento de instituição',b:[['Comissão','gray']]}
+    ]},
+    {t:'Aguardando Profissional',c:'dark',cards:[]},
+    {t:'Resolvido',c:'green',cards:[
+      {t:'Sônia Braga',s:'Pontos lançados · 12 créditos',b:[['IA notificou','gold']]}
+    ]},
+    {t:'Encerrado',c:'dark',cards:[
+      {t:'Wagner Dias',s:'Evento certificado',b:[['Auditoria','gray']]}
+    ]}
+  ]},
+  jur:{label:'⚖️ Jurídico & ADM',note:'Denúncias, processos éticos e licitações (o antigo menu de 17 opções). A IA nunca responde mérito — protocola, prioriza e escala imediatamente com dossiê.',cols:[
+    {t:'Novo (via IA)',c:'gold',cards:[
+      {t:'Luiz Castro',s:'Dúvida edital 04/2026',b:[['→ ADM/Licitação','gold']]},
+      {t:'Anônimo',s:'Denúncia ética · sigilo',b:[['ALTA','red'],['Sigiloso','gray']]}
+    ]},
+    {t:'Em Atendimento',c:'blue',cards:[
+      {t:'Sérgio Tavares',s:'Reclamação · supervisor atuando',b:[['Dossiê IA','gold'],['ALTA','red']]}
+    ]},
+    {t:'Investigação',c:'dark',cards:[
+      {t:'Processo 112/26',s:'Análise estruturada em curso',b:[['Prazo monitorado','blue']]}
+    ]},
+    {t:'Resolvido',c:'green',cards:[
+      {t:'Márcia Reis',s:'Resposta fundamentada enviada',b:[['Follow-up','blue']]}
+    ]},
+    {t:'Encerrado',c:'dark',cards:[]}
+  ]}
+};
+function buildKanbans(){
+  const pills=document.getElementById('kb-pills');
+  const boards=document.getElementById('kb-boards');
+  Object.keys(KB).forEach((k,i)=>{
+    const btn=document.createElement('button');
+    btn.className='kb-pill'+(i===0?' active':'');
+    btn.textContent=KB[k].label;
+    btn.onclick=function(){
+      document.querySelectorAll('.kb-pill').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.kb-board-wrap').forEach(w=>w.classList.remove('active'));
+      document.getElementById('kbw-'+k).classList.add('active');
+    };
+    pills.appendChild(btn);
+    const wrap=document.createElement('div');
+    wrap.className='kb-board-wrap'+(i===0?' active':'');
+    wrap.id='kbw-'+k;
+    let html='<p class="kb-note">'+KB[k].note+'</p><div class="kb-board">';
+    KB[k].cols.forEach(col=>{
+      html+='<div class="kb-col"><div class="kb-col-hd '+col.c+'"><span class="kb-col-title">'+col.t+'</span><span class="kb-count">'+col.cards.length+'</span></div><div class="kb-cards">';
+      if(col.cards.length===0)html+='<div class="kb-empty">— vazio —</div>';
+      col.cards.forEach(cd=>{
+        html+='<div class="kb-card"><div class="t">'+cd.t+'</div><div class="s">'+cd.s+'</div><div class="kb-badges">';
+        cd.b.forEach(bg=>{html+='<span class="tag tag-'+bg[1]+'">'+bg[0]+'</span>';});
+        html+='</div></div>';
+      });
+      html+='</div></div>';
     });
-  }
-
-  if (modalCloseBtn) {
-    modalCloseBtn.addEventListener('click', () => {
-      successModal.classList.remove('active');
-      document.body.style.overflow = '';
-      contactForm.reset();
-    });
-  }
+    html+='</div>';
+    wrap.innerHTML=html;
+    boards.appendChild(wrap);
+  });
+}
+/* ══════════ CENÁRIOS (cards) ══════════ */
+function buildScenarios(){
+  const grid=document.getElementById('sc-gri');
+  SC.forEach((sc,i)=>{
+    const card=document.createElement('div');
+    card.className='scenario-card'+(i===0?' selected':'');
+    card.onclick=function(){selSc(i,card);};
+    card.innerHTML='<div class="sc-tag '+sc.tagC+'">'+sc.tag+'</div><h4>'+sc.title+'</h4><p>'+sc.desc+'</p>';
+    grid.appendChild(card);
+  });
+}
+window.addEventListener('load',function(){buildScenarios();buildKanbans();});
 </script>
-
 </body>
 </html>
